@@ -27,11 +27,11 @@
 }
 
 .sidebar-element.separate-item {
-    border-top: 1px solid #5e5e5e;
+    border-top: 1px solid rgb(0, 56, 200);
 }
 
 .sidebar-element.separate-item div {
-    border: 1px solid #5e5e5e;
+    border: 1px solid rgb(0, 56, 200);
 }
 
 /* Medium */
@@ -49,7 +49,7 @@ nav,
 table.striped > tbody > tr:nth-child(2n+1),
 .content-wrapper .btn-holder input[type="text"],
 header {
-    background-color: #222222;
+    background-color: rgb(0,56,101);
 }
 
 progress[value]::-webkit-progress-value {
@@ -163,7 +163,7 @@ header #search_term, .sidebar-wrapper .header-logo, .tabs,
 thead th,
 .box, .box .content,
 .nav-wrapper #search_term, body {
-    background-color: #2a2a2a;
+    background-color: rgb(0, 0, 0);
 }
 
 .croppie-container .cr-resizer, .croppie-container .cr-viewport {
@@ -171,7 +171,7 @@ thead th,
 }
 
 .sidebar-element.separate-item {
-    border-top: 1px solid #7d7f82;
+    border-top: 1px solid tgb(0, 56, 200);
 }
 
 .breadcrumb-item + .breadcrumb-item::before {
@@ -183,24 +183,28 @@ thead th,
 }
 
 [type="checkbox"]:checked + span:not(.lever)::before {
-    border-right: 2px solid #009688;
-    border-bottom: 2px solid #009688;
+    border-right: 2px solid rgb(0, 56, 200);
+    border-bottom: 2px solid rgb(0, 56, 200);
 }
 
 .btn-holder .button, a, .suggestion, h3.header, h2.header,
 .autocomplete-content li .highlight,
 .autocomplete-result a b {
-    color: #009688;
+    color: rgb(0, 56, 200);
 }
 
 input:not([type]):focus:not([readonly]), input[type="date"]:not(.browser-default):focus:not([readonly]), input[type="datetime-local"]:not(.browser-default):focus:not([readonly]), input[type="datetime"]:not(.browser-default):focus:not([readonly]), input[type="email"]:not(.browser-default):focus:not([readonly]), input[type="number"]:not(.browser-default):focus:not([readonly]), input[type="password"]:not(.browser-default):focus:not([readonly]), input[type="search"]:not(.browser-default):focus:not([readonly]), input[type="tel"]:not(.browser-default):focus:not([readonly]), input[type="text"]:not(.browser-default):focus:not([readonly]), input[type="time"]:not(.browser-default):focus:not([readonly]), input[type="url"]:not(.browser-default):focus:not([readonly]), textarea.materialize-textarea:focus:not([readonly]) {
-    border-bottom: 1px solid #009688;
-    -webkit-box-shadow: 0 1px 0 0 #009688;
-    box-shadow: 0 1px 0 0 #009688;
+    border-bottom: 1px solid rgb(0, 56, 200);
+    -webkit-box-shadow: 0 1px 0 0 rgb(0, 56, 200);
+    box-shadow: 0 1px 0 0 rgb(0, 56, 200);
 }
 
 .modal-custom .modal-header {
-    background: #009688;
+    background: rgb(0, 56, 200);
+}
+
+.breadcrumb .last {
+    color: rgb(193, 10, 39)
 }
 
 input:not([type]):focus:not([readonly]) + label,
@@ -216,11 +220,11 @@ input[type="text"]:not(.browser-default):focus:not([readonly]) + label,
 input[type="time"]:not(.browser-default):focus:not([readonly]) + label,
 input[type="url"]:not(.browser-default):focus:not([readonly]) + label,
 textarea.materialize-textarea:focus:not([readonly]) + label,
-.item-details .data a, .breadcrumb .last,
+.item-details .data a,
 .picker__day.picker__day--today, .picker__close, .picker__today,
 a, .datepicker-cancel, .datepicker-clear, .datepicker-today, .datepicker-done, .datepicker-table td.is-today:not(.is-selected),
 .datum-row a {
-    color: #009688;
+    color: rgb(0, 56, 200);
 }
 
 .btn, .btn-large, .toast, html.loading:before,
@@ -233,23 +237,23 @@ a, .datepicker-cancel, .datepicker-clear, .datepicker-today, .datepicker-done, .
 html.loading:before,
 #offline-message,
 .autocomplete-content li:hover {
-    background-color: #009688;
+    background-color: rgb(0, 56, 200);
 }
 
 .pie-wrapper .pie .half-circle, .tabs-block li.tab.current {
-    border-color: #009688;
+    border-color: rgb(0, 56, 200);
 }
 
 progress[value]::-webkit-progress-value {
-    background-color: #009688;
+    background-color: rgb(0, 56, 200);
 }
 
 progress[value]::-moz-progress-bar {
-    background-color: #009688;
+    background-color: rgb(0, 56, 200);
 }
 
 progress[value]::-ms-fill {
-    background-color: #009688;
+    background-color: rgb(0, 56, 200);
 }
 
 .avatar.circle.color-avatar, .user-avatar.circle {
