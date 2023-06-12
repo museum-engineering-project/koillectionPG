@@ -14,20 +14,20 @@
 .btn:hover,
 .btn-large:hover,
 .picker__date-display {
-    background-color: #1ab0a2;
+    background-color: rgb(0, 56, 101);
 }
 
 .sidebar-element.separate-item {
-    border-top: 1px solid #1ab0a2;
+    border-top: 1px solid rgb(0, 56, 200);
 }
 
 .sidebar-element.separate-item div {
-    border: 1px solid #1ab0a2;
+    border: 1px solid rgb(0, 56, 200);
 }
 
 /* Medium */
 .sidebar-wrapper,
-.sidebar-wrapper .header-logo:hover,
+.sidebar-wrapper,
 .btn,
 .btn-large,
 .progress .determinate,
@@ -41,19 +41,23 @@ nav,
 .header-profile .down-background,
 .datepicker-date-display,
 .datepicker-table td.is-selected {
-    background-color: #009688;
+    background-color: rgb(0, 56, 101);
+}
+
+.nav-wrapper .header-logo:hover {
+ background-color:rgb(0, 56, 200);
 }
 
 progress[value]::-webkit-progress-value {
-    background-color: #009688;
+    background-color: rgb(0, 56, 200);
 }
 
 progress[value]::-moz-progress-bar {
-    background-color: #009688;
+    background-color: rgb(0, 56, 200);
 }
 
 progress[value]::-ms-fill {
-    background-color: #009688;
+    background-color: rgb(0, 56, 200);
 }
 
 .breadcrumb .last,
@@ -66,40 +70,40 @@ textarea.materialize-textarea:focus:not([readonly]) + label,
 a, .datepicker-cancel, .datepicker-clear, .datepicker-today, .datepicker-done, .datepicker-table td.is-today:not(.is-selected),
 .autocomplete-content li .highlight,
 .autocomplete-result a b {
-    color: #009688;
+    color: rgb(0, 56, 200);
 }
 
 .content-header .filter-block #filter-by-name-input:focus,
 [type="radio"].with-gap:checked + span:before,
 .tabs-block .tab.current,
 .pie-wrapper .pie .half-circle {
-    border-color: #009688;
+    border-color: rgb(0, 56, 200);
 }
 
 [type="radio"].with-gap:checked + span::after, [type="radio"]:checked + span::after {
-    background-color: #009688;
-    border-color: #009688;
+    background-color: rgb(0, 56, 200);
+    border-color: rgb(0, 56, 200);
 }
 
 [type="checkbox"]:checked + span:not(.lever)::before {
-    border-right: 2px solid #009688;
-    border-bottom: 2px solid #009688;
+    border-right: 2px solid rgb(0, 56, 200);
+    border-bottom: 2px solid rgb(0, 56, 200);
 }
 
 input[type=range]::-moz-range-thumb {
-    background: #009688;
+    background: rgb(0, 56, 200);
 }
 
 input[type=range]::-webkit-slider-thumb {
-    background: #009688;
+    background: rgb(0, 56, 200);
 }
 
 input[type=range]::-ms-track {
-    background: #009688;
+    background: rgb(0, 56, 200);
 }
 
 .modal-custom .modal-header {
-    background: #009688;
+    background: rgb(0, 56, 200);
 }
 
 input[type=text]:focus:not([readonly]), input[type=password]:focus:not([readonly]), input[type=email]:focus:not([readonly]), input[type=url]:focus:not([readonly]), input[type=time]:focus:not([readonly]), input[type=date]:focus:not([readonly]),
@@ -107,17 +111,17 @@ input[type=datetime-local]:focus:not([readonly]), input[type=tel]:focus:not([rea
 input.valid:not([type]), input.valid:focus:not([type]), input.valid[type="text"], input.valid[type="text"]:focus, input.valid[type="password"], input.valid[type="password"]:focus, input.valid[type="email"],
 input.valid[type="email"]:focus, input.valid[type="url"], input.valid[type="url"]:focus, input.valid[type="time"], input.valid[type="time"]:focus, input.valid[type="date"], input.valid[type="date"]:focus, input.valid[type="datetime-local"],
 input.valid[type="datetime-local"]:focus, input.valid[type="tel"], input.valid[type="tel"]:focus, input.valid[type="number"], input.valid[type="number"]:focus, input.valid[type="search"], input.valid[type="search"]:focus, textarea.materialize-textarea.valid, textarea.materialize-textarea.valid:focus {
-    border-bottom: 1px solid #009688;
-    box-shadow: 0 1px 0 0 #009688;
+    border-bottom: 1px solid rgb(0, 56, 200);
+    box-shadow: 0 1px 0 0 rgb(0, 56, 200);
 }
 
 .tabs-block li.tab.current {
-    border-bottom: 3px solid #009688;
+    border-bottom: 3px solid rgb(0, 56, 200);
 }
 
 /* Dark */
 .sidebar-element a:hover, .sidebar-element.current a, .nav-bottom input:hover, .nav-bottom a:hover {
-    background-color: #006355;
+    background-color: rgb(0, 56, 200);
 }
 
 /* Complementary */
