@@ -1359,8 +1359,14 @@
     </unit>
     <unit id="11HETEc" name="global.welcome">
       <segment state="translated">
-        <source>Welcome to Koillection</source>
-        <target>Bienvenido a Koillection</target>
+        <source>Welcome to ETI museum!</source>
+        <target>Bienvenido a ETI museo!</target>
+      </segment>
+    </unit>
+    <unit id="xd3721a" name="global.eti-museum">
+      <segment state="translated">
+        <source>ETI museo</source>
+        <target>ETI museo</target>
       </segment>
     </unit>
     <unit id="S92egy5" name="title.sign_in">
