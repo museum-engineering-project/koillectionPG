@@ -53,7 +53,7 @@ class LoginTest extends AppTestCase
         ]);
 
         // Assert
-        $this->assertSame('Welcome to Koillection', $crawler->filter('h1')->text());
+        $this->assertSame('Welcome to ETI museum!', $crawler->filter('h1')->text());
         $this->assertSame('Invalid credentials.', $crawler->filter('.error-helper')->text());
     }
 
@@ -70,7 +70,7 @@ class LoginTest extends AppTestCase
         ]);
 
         // Assert
-        $this->assertSame('Welcome to Koillection', $crawler->filter('h1')->text());
+        $this->assertSame('Welcome to ETI museum!', $crawler->filter('h1')->text());
         $this->assertSame('User not activated', $crawler->filter('.error-helper')->text());
     }
 }
