@@ -8,8 +8,10 @@
                 <div class="header-logo">
                     <a href="{{ path('app_homepage'|applyContext) }}">
                         <img class='logo' src="{{ preload(asset('build/images/logo.svg'), { as: 'image/svg'}) }}"
-                             aria-label="Logo" height="45" width="45">
-                        <span>Koillection</span>
+                             aria-label="Logo" height="50" width="70">
+                        <span>
+                            {{ 'global.eti-museum'|trans }}
+                        </span>
                     </a>
                 </div>
             </div>
