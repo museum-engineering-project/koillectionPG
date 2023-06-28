@@ -13,16 +13,16 @@
     --font-color-lightest: #7d7f82;
 
     /* Buttons, hovers */
-    --primary-color: #009688;
-    --primary-color-light: #1AB0A2;
-    --primary-color-lightest: #80cbc4;
-    --primary-color-dark: #006355;
+    --primary-color: rgb(0, 56, 101);
+    --primary-color-light: rgb(0, 81, 145);
+    --primary-color-lightest: rgb(0, 100, 179);
+    --primary-color-dark: rgb(0, 29, 51);
 
     /* Mainly used for icons and titles */
-    --secondary-color: #009688;
+    --secondary-color: rgb(0, 56, 101);
 
     /* Cancel buttons and error messages */
-    --warning-color: #e53935;
+    --warning-color: rgb(193, 10, 39);
 }
 
 .avatar.circle.color-avatar, .user-avatar.circle {
