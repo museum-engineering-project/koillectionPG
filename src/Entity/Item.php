@@ -360,6 +360,12 @@ class Item implements BreadcrumbableInterface, LoggableInterface, CacheableInter
 
     public function addData(Datum $data): self
     {
+        if ($data->getLabel()[0] == '_') {
+            $data->setVisibility(VisibilityEnum::VISIBILITY_PRIVATE);
+        } else {
+            $data->setVisibility(VisibilityEnum::VISIBILITY_PUBLIC);
+        }
+        
         if (!$this->data->contains($data)) {
             $this->data[] = $data;
             $data->setItem($this);
