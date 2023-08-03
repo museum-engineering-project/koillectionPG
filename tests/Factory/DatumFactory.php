@@ -6,6 +6,7 @@ namespace App\Tests\Factory;
 
 use App\Entity\Datum;
 use App\Enum\DatumTypeEnum;
+use App\Enum\VisibilityEnum;
 use App\Repository\DatumRepository;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
@@ -38,6 +39,7 @@ final class DatumFactory extends ModelFactory
             'label' => self::faker()->word(),
             'type' => DatumTypeEnum::TYPE_TEXT,
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
+            'visibility' => VisibilityEnum::VISIBILITY_PUBLIC
         ];
     }
 
