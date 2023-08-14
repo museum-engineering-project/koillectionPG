@@ -7,6 +7,7 @@ namespace App\Form\Type\Entity;
 use App\Entity\ChoiceList;
 use App\Entity\Field;
 use App\Enum\DatumTypeEnum;
+use App\Enum\VisibilityEnum;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -39,6 +40,10 @@ class FieldType extends AbstractType
             ])
             ->add('choiceList', EntityType::class, [
                 'class' => ChoiceList::class,
+                'required' => true,
+            ])
+            ->add('visibility', ChoiceType::class, [
+                'choices' => array_flip(VisibilityEnum::getVisibilityLabels()),
                 'required' => true,
             ])
         ;
