@@ -125,7 +125,7 @@ class Datum implements \Stringable
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(type: Types::STRING, length: 10)]
-    #[Groups(['collection:read', 'collection:write'])]
+    #[Groups(['datum:read', 'datum:write'])]
     #[Assert\Choice(choices: VisibilityEnum::VISIBILITIES)]
     private string $visibility = VisibilityEnum::VISIBILITY_PUBLIC;
 
