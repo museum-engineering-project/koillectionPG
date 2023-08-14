@@ -66,7 +66,7 @@ class ItemController extends AbstractController
                     ->setType($field->getType())
                     ->setPosition($field->getPosition())
                     ->setChoiceList($field->getChoiceList())
-                    ->setVisibility(VisibilityEnum::VISIBILITY_PRIVATE) // todo get this from the template
+                    ->setVisibility($field->getVisibility())
                 );
             }
         }
