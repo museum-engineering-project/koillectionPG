@@ -55,20 +55,22 @@
                 >
             </div>
         {% endif %}
-    </div>
-    <div class="col s12 l5 xl4">
-        <div class="row">
-            <div class="col s12 l5 offset-l1 xl4 offset-xl2">
-                <input
-                        type="text"
-                        id="data_{{ iteration }}_visibility"
-                        name="{{ entity }}[data][{{ iteration }}][visibility]"
-                        maxlength="255"
-                        value="{{ label }}"
-                        placeholder="public"
-                >
-                TODO ADD VISIBILITY CHOICE HERE
-            </div>
+
+
+        <div class="input-field outlined col s10 offset-s1 m5">
+
+            <select id="data_{{ iteration }}_visibility"
+                    name="{{ entity }}[data][{{ iteration }}][visibility]"
+                    data-controller="select--visibility"
+            >
+            {% for visibility in getVisibilities() %}
+                <option value={{ visibility }}
+                        {% if datum is defined and datum.visibility == visibility %}selected{% endif %}>
+                    {{ ('global.visibilities.' ~ visibility)|trans }}
+                </option>
+            {% endfor %}
+            </select>
+            <label for="data_{{ iteration }}_visibility">{{ 'label.visibility'|trans }}</label>
         </div>
     </div>
 </div>
