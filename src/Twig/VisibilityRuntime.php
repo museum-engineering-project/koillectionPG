@@ -15,6 +15,11 @@ class VisibilityRuntime implements RuntimeExtensionInterface
     ) {
     }
 
+    public static function getVisibilities(): array
+    {
+        return VisibilityEnum::VISIBILITIES;
+    }
+
     public function getVisibilityReason(?string $visibility, string $userVisibility): string
     {
         // Public
