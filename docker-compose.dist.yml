@@ -13,37 +13,36 @@ services:
         environment:
             - APP_ENV=dev
             - APP_DEBUG=1
-            - DB_DRIVER=pdo_pgsql
+            - DB_DRIVER=pdo_mysql
             - DB_NAME=koillection
-            - DB_HOST=postgresql
-            - DB_PORT=5432
-            - DB_USER=postgres
+            - DB_HOST=mysql
+            - DB_PORT=3306
+            - DB_USER=root
             - DB_PASSWORD=password
-            - DB_VERSION=15
-            - PHP_TZ=Europe/Paris
+            - DB_VERSION=8
+            - PHP_TZ=Europe/Warsaw
             - HTTPS_ENABLED=0
         depends_on:
             - mysql
-            - postgresql
         volumes:
             - "./docker/volumes/koillection/public/uploads:/var/www/koillection/public/uploads"
             - ./:/var/www/koillection
 
-    postgresql:
-        container_name: postgresql
-        image: postgres:16
-        environment:
-            - POSTGRES_DB=koillection
-            - POSTGRES_USER=postgres
-            - POSTGRES_PASSWORD=password
-        volumes:
-            - "./docker/volumes/postgresql:/var/lib/postgresql/data"
-
     mysql:
         container_name: mysql
         image: mysql:latest
+        restart: always
         environment:
             - MYSQL_DATABASE=koillection
             - MYSQL_ROOT_PASSWORD=password
         volumes:
             - "./docker/volumes/mysql:/var/lib/mysql"
+
+    phpmyadmin:
+        container_name: phpmyadmin
+        image: phpmyadmin
+        restart: always
+        ports:
+            - 8080:80
+        environment:
+            - PMA_ARBITRARY=1
