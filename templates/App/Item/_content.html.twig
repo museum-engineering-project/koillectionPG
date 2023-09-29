@@ -37,6 +37,11 @@
                     title="{{ 'tooltip.generate_dublin_core_xml'|trans }}">
                     <i class="fa fa fa-file-code-o fa-fw"></i>
                 </a>
+
+                <a href="{{ path('app_item_generate_label', {'id': item.id}) }}" class="button"
+                    title="{{ 'Generate label' }}">
+                    <i class="fa fa-file-text fa-fw"></i>
+                </a>
                 {{ include('App/_partials/_icon/_share.html.twig', {route: 'app_shared_item_show', entity: item}) }}
                 {{ include('App/_partials/_visibility.html.twig', {'visibility': item.finalVisibility}) }}
             </div>

@@ -9,8 +9,10 @@ use App\Entity\Item;
 use App\Entity\Loan;
 use App\Entity\Template;
 use App\Enum\VisibilityEnum;
+use App\Entity\Label;
 use App\Form\Type\Entity\ItemType;
 use App\Form\Type\Entity\LoanType;
+use App\Form\Type\Entity\LabelType;
 use App\Form\Type\Model\ScrapingType;
 use App\Model\Scraping;
 use App\Repository\ChoiceListRepository;
@@ -27,6 +29,8 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -218,5 +222,25 @@ class ItemController extends AbstractController
                         );
 
         return $response; 
+    }
+
+    #[Route(path: '/items/{id}/generate-label', name: 'app_item_generate_label', methods: ['GET', 'POST'])]
+    public function generateLabel(Request $request, Item $item): Response
+    {
+        $label = new Label();
+        $label->setItem($item);
+
+        $form = $this->createForm(LabelType::class, $label);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->addFlash('notice', "Label generated " . $label->getLabelSize());
+
+            return $this->redirectToRoute('app_item_show', ['id' => $item->getId()]);
+        }
+
+        return $this->render('App/Item/generate_label.html.twig', [
+            'item' => $item,
+            'form' => $form,
+        ]);
     }
 }
