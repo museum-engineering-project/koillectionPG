@@ -15,7 +15,9 @@
     <img src="https://img.shields.io/badge/mysql->=8.0-blue" />
 <p>
 
-# Koillection
+# KoillectionPG
+
+Koillection PG is a fork of Koillection, especially adapted for Faculty of Electronics, Telecomunications and Informatics of Gdańsk University Of Technology use.
 
 Koillection is a self-hosted collection manager created to keep track of physical (mostly) collections of any kind like books, DVDs, stamps, games... 
 Koillection is meant to be used for any kind of collections and doesn't come with pre-built metadata download. But you can tailor your own HTML scraper, or you can add your own metadata freely.
