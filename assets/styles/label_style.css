@@ -1,0 +1,115 @@
+@page {
+    size: A4;
+}
+
+html[size="A4"] {
+    margin: 0;
+}
+  
+.label {
+    margin: 0 0;
+    background-color: white;
+    border: 0.05cm solid black;
+}
+
+/* all sizes are reduced by 1mm border */ 
+
+.label[size="A4"][orientation="vertical"] {
+    width: 209mm;
+    height: 296mm;
+}
+
+.label[size="A4"][orientation="horizontal"] {
+    width: 296mm;
+    height: 209mm;
+}
+
+.label[size="A5"][orientation="vertical"] {
+    width: 147mm;
+    height: 209mm;
+}
+
+.label[size="A5"][orientation="horizontal"] {
+    width: 209mm;
+    height: 147mm;
+}
+
+.label[size="A6"][orientation="vertical"] {
+    width: 104mm;
+    height: 147mm;
+}
+
+.label[size="A6"][orientation="horizontal"] {
+    width: 147mm;
+    height: 104mm;
+}
+
+.label[size="A7"][orientation="vertical"] {
+    width: 73mm;
+    height: 104mm;
+}
+
+.label[size="A7"][orientation="horizontal"] {
+    width: 104mm;
+    height: 73mm;
+}
+
+.content {
+    margin: 0 0;
+    font-size: 12pt;
+    overflow: auto;
+}
+
+.label[orientation="vertical"] .content {
+    width: 100%;
+    height: 75%;
+}
+
+.label[orientation="horizontal"] .content {
+    width: 75%;
+    height: 100%;
+    float: left;
+}
+
+p {
+    margin: 0;
+    padding: 0;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-bottom: 0.7em;
+}
+
+p:first-child {
+    padding-top: 1em;
+}
+
+p:last-child {
+    padding-bottom: 0;
+}
+
+.qrCode {
+    position: relative;
+}
+
+.label[orientation="vertical"] .qrCode {
+    height: 25%;
+    width: 100%;
+}
+
+.label[orientation="horizontal"] .qrCode{
+    width: 25%;
+    height: 100%;
+    float: left;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}

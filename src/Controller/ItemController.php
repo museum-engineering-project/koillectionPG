@@ -21,6 +21,7 @@ use App\Repository\ItemRepository;
 use App\Repository\TagRepository;
 use App\Service\DublinCoreXMLGenerator;
 use App\Service\ItemNameGuesser;
+use App\Service\LabelsGenerator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -225,7 +226,7 @@ class ItemController extends AbstractController
     }
 
     #[Route(path: '/items/{id}/generate-label', name: 'app_item_generate_label', methods: ['GET', 'POST'])]
-    public function generateLabel(Request $request, Item $item): Response
+    public function generateLabel(Request $request, Item $item, LabelsGenerator $labelsGenerator): Response
     {
         $label = new Label();
         $label->setItem($item);
@@ -233,9 +234,23 @@ class ItemController extends AbstractController
         $form = $this->createForm(LabelType::class, $label);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->addFlash('notice', "Label generated " . $label->getLabelSize());
+            $generatedLabel = $labelsGenerator->generateLabel($label);
 
-            return $this->redirectToRoute('app_item_show', ['id' => $item->getId()]);
+            // Display pdf file instead of downloading
+            /*
+            $response = new Response($generatedLabel['content'], 
+                                     Response::HTTP_OK, 
+                                     ['Content-Type' => 'application/pdf']);
+            */
+            
+            $response = new Response($generatedLabel['content']);
+            $disposition = HeaderUtils::makeDisposition(
+                HeaderUtils::DISPOSITION_ATTACHMENT,
+                $generatedLabel['filename']
+            );
+            $response->headers->set('Content-Disposition', $disposition);
+
+            return $response;
         }
 
         return $this->render('App/Item/generate_label.html.twig', [

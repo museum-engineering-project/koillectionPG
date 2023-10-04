@@ -7,6 +7,7 @@ namespace App\Form\Type\Entity;
 use App\Entity\Label;
 use Symfony\Component\Form\AbstractType;
 use App\Enum\LabelSizeEnum;
+use App\Enum\OrientationEnum;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -18,6 +19,10 @@ class LabelType extends AbstractType
         $builder
             ->add('labelSize', ChoiceType::class, [
                 'choices' => array_flip(LabelSizeEnum::getLabelSizes()),
+                'required' => true,
+            ])
+            ->add('orientation', ChoiceType::class, [
+                'choices' => array_flip(OrientationEnum::getOrientations()),
                 'required' => true,
             ])
         ;

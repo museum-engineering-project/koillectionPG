@@ -8,6 +8,7 @@ class Label
 {
     private ?Item $item = null;
     private ?string $labelSize = null;
+    private ?string $orientation = null;
 
     public function getItem(): ?Item
     {
@@ -29,6 +30,18 @@ class Label
     public function setLabelSize(?string $labelSize): self
     {
         $this->labelSize = $labelSize;
+
+        return $this;
+    }
+
+    public function getOrientation(): ?string
+    {
+        return $this->orientation;
+    }
+
+    public function setOrientation(?string $orientation): self
+    {
+        $this->orientation = $orientation;
 
         return $this;
     }
