@@ -60,7 +60,7 @@
 
             <select id="data_{{ iteration }}_visibility"
                     name="{{ entity }}[data][{{ iteration }}][visibility]"
-                    data-controller="select--visibility"
+                    data-controller="select--field-visibility"
             >
             {% for visibility in getVisibilities() %}
                 <option value={{ visibility }}

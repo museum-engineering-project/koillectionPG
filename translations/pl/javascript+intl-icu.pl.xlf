@@ -32,6 +32,23 @@
     
     
     
-    
+    <unit id="Ne6EV8v" name="global.visibilities.internal.field-description">
+      <segment state="translated">
+        <source>Only authenticated users can see this field</source>
+        <target>Tylko uwierzytelnieni użytkownicy mogą zobaczyć to pole</target>
+      </segment>
+    </unit>
+    <unit id="nlSC2eZ" name="global.visibilities.public.field-description">
+      <segment state="translated">
+        <source>Anyone can see this field</source>
+        <target>Każdy może zobaczyć to pole</target>
+      </segment>
+    </unit>
+    <unit id="t8djlL3" name="global.visibilities.private.field-description">
+      <segment state="translated">
+        <source>Only I can see this field</source>
+        <target>Tylko ja mogę zobaczyć to pole</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
