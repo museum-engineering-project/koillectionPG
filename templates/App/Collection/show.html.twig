@@ -50,6 +50,10 @@
 
             <div class="btn-holder">
                 <div class="left">
+                    <a href="{{ path('app_collection_generate_label', {'id': collection.id}) }}" class="button"
+                        title="{{ 'Generate label' }}">
+                        <i class="fa fa-file-text fa-fw"></i>
+                    </a>
                     {% if context == 'default' %}
                         <a href="{{ path('app_item_add', {'collection': collection.id}) }}" class="button"
                            title="{{ 'tooltip.add_item'|trans }}">

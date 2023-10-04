@@ -1,6 +1,6 @@
 {% extends 'layout.html.twig' %}
 
-{% set breadcrumb = buildBreadcrumb([{'route': 'app_collection_index', 'trans': 'menu.collections'}], item, 'Generate label') %}
+{% set breadcrumb = buildBreadcrumb([{'route': 'app_collection_index', 'trans': 'menu.collections'}], collection, 'Generate label') %}
 
 {% block title %}
     {{ renderTitle(breadcrumb) }}
@@ -12,7 +12,7 @@
 
 {% block content %}
     <div class="title-block">
-        <h1>{{ 'Generate label for item'|trans({'item': item.name}) }}</h1>
+        <h1>{{ 'Generate label for collection'|trans({'collection': collection.title}) }}</h1>
     </div>
 
     <div class="content-block">
@@ -26,7 +26,7 @@
 
         <div class="center-align form-btn-holder">
             <button type="submit" class="btn waves-effect waves-light">{{ 'Download' }}</button>
-            <a href="{{ path('app_item_show', { id : item.id }) }}"
+            <a href="{{ path('app_collection_show', { id : collection.id }) }}"
                class="waves-effect waves-light btn btn-cancel">{{ 'Back'}}</a>
         </div>
         {{ form_end(form) }}

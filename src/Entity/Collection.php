@@ -18,6 +18,7 @@ use App\Entity\Interfaces\BreadcrumbableInterface;
 use App\Entity\Interfaces\CacheableInterface;
 use App\Entity\Interfaces\LoggableInterface;
 use App\Enum\VisibilityEnum;
+use App\Enum\DatumTypeEnum;
 use App\Repository\CollectionRepository;
 use App\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -467,5 +468,13 @@ class Collection implements LoggableInterface, BreadcrumbableInterface, Cacheabl
         $this->scrapedFromUrl = $scrapedFromUrl;
 
         return $this;
+    }
+
+    public function getDataTexts(): DoctrineCollection
+    {
+        $criteria = Criteria::create();
+        $criteria->where(Criteria::expr()->in('type', DatumTypeEnum::TEXT_TYPES))->orderBy(['position' => Criteria::ASC]);
+
+        return $this->data->matching($criteria);
     }
 }

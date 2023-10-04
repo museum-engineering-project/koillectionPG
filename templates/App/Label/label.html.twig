@@ -127,7 +127,7 @@
     <body>
         <div class="label" size="{{ labelSize }}" orientation="{{ orientation }}">
             <div class="content">
-                {% for datum in item.dataTexts %}
+                {% for datum in object.dataTexts %}
                     <p>
                        <b>{{ datum.label }}:</b> {{ datum.value }}
                     </p>

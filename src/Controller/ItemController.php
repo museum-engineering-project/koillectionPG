@@ -229,7 +229,7 @@ class ItemController extends AbstractController
     public function generateLabel(Request $request, Item $item, LabelsGenerator $labelsGenerator): Response
     {
         $label = new Label();
-        $label->setItem($item);
+        $label->setObject($item);
 
         $form = $this->createForm(LabelType::class, $label);
         $form->handleRequest($request);

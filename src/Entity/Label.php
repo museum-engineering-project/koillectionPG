@@ -6,18 +6,18 @@ namespace App\Entity;
 
 class Label 
 {
-    private ?Item $item = null;
+    private Item|Collection|null $object = null;
     private ?string $labelSize = null;
     private ?string $orientation = null;
 
-    public function getItem(): ?Item
+    public function getObject(): Item|Collection|null
     {
-        return $this->item;
+        return $this->object;
     }
     
-    public function setItem(?Item $item): self
+    public function setObject(Item|Collection|null $object): self
     {
-        $this->item = $item;
+        $this->object = $object;
         
         return $this;
     }

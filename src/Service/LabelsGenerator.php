@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Label;
+use App\Entity\Item;
+use App\Entity\Collection;
 use App\Enum\OrientationEnum;
 use Twig\Environment;
 use Endroid\QrCode\QrCode;
@@ -20,11 +22,13 @@ class LabelsGenerator
     ) 
     {}
 
-    public function generateQrCode(string $itemId)
+    public function generateQrCode(Item|Collection $object)
     {
+        $route = $object instanceof Item ? "app_item_show" : "app_collection_show";
+
         $qrCode = new QrCode($this->urlGenerator->generate(
-            'app_item_show',
-            array('id' => $itemId),
+            $route,
+            array('id' => $object->getId()),
             UrlGeneratorInterface::ABSOLUTE_URL));
         $writer = new PngWriter();
         $qrCodeImg = $writer->write($qrCode)->getDataUri();
@@ -36,17 +40,17 @@ class LabelsGenerator
     {
         $labelSize = $label->getLabelSize();
         $orientation = $label->getOrientation();
-        $item = $label->getItem();
+        $object = $label->getObject();
         $cssOrientation = $orientation == OrientationEnum::ORIENTATION_VERTICAL ? "portrait" : "landscape";
 
-        $qrCodeImg = $this->generateQrCode($item->getId());
+        $qrCodeImg = $this->generateQrCode($object);
 
         $htmlContent = $this->twig->render('App/Label/label.html.twig', [
             'qrCode' => $qrCodeImg,
             'labelSize' => $labelSize,
             'orientation' => $orientation,
             'css_orientation' => $cssOrientation,
-            'item' => $item,
+            'object' => $object,
         ]);
         
         $dompdf = new Dompdf();
@@ -54,7 +58,8 @@ class LabelsGenerator
         $dompdf->loadHtml($htmlContent);
         $dompdf->render();
 
-        $filename = "item_label_{$labelSize}.pdf";
+        $type = $object instanceof Item ? 'item' : 'collection';
+        $filename = "{$type}_label_{$labelSize}.pdf";
 
         return array('content' => $dompdf->output(),
                      'filename' => $filename);
