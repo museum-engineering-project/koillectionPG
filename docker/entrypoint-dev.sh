@@ -51,4 +51,8 @@ chown -R www-data:www-data /logs/nginx
 
 echo "**** Setup complete, starting the server. ****"
 php-fpm8.2
+
+echo "**** Resolve no write permission ****"
+chown -R www-data:www-data /var/www/koillection/public/uploads
+
 exec $@
