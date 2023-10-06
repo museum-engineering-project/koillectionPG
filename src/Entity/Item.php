@@ -199,6 +199,17 @@ class Item implements BreadcrumbableInterface, LoggableInterface, CacheableInter
         return $this->data->matching($criteria);
     }
 
+    public function getPublicDataTexts(): DoctrineCollection
+    {
+        $criteria = Criteria::create();
+        $expressionBuilder = Criteria::expr();
+        $criteria->where($expressionBuilder->in('type', DatumTypeEnum::TEXT_TYPES))
+            ->andWhere($expressionBuilder->eq('visibility', VisibilityEnum::VISIBILITY_PUBLIC))
+            ->orderBy(['position' => Criteria::ASC]);
+
+        return $this->data->matching($criteria);
+    }
+
     public function hasTag(Tag $tag): bool
     {
         return $this->tags->contains($tag);
