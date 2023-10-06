@@ -1093,6 +1093,12 @@
         <target>Prestar este elemento</target>
       </segment>
     </unit>
+    <unit id="4O6JaXD" name="tooltip.generate_dublin_core_xml">
+      <segment state="translated">
+        <source>Generate Dublin Core XML</source>
+        <target>Generar Dublin Core XML</target>
+      </segment>
+    </unit>
     <unit id="HmUuNCa" name="label.main_image">
       <segment state="translated">
         <source>Main image</source>
