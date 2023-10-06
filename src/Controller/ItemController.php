@@ -17,11 +17,13 @@ use App\Repository\ChoiceListRepository;
 use App\Repository\CollectionRepository;
 use App\Repository\ItemRepository;
 use App\Repository\TagRepository;
+use App\Service\DublinCoreXMLGenerator;
 use App\Service\ItemNameGuesser;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\Asset\Packages;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -203,5 +205,19 @@ class ItemController extends AbstractController
         }
 
         return new JsonResponse($data);
+    }
+
+    #[Route(path: '/items/{id}/generate-dublincore-xml', name: 'app_item_generate_dublin_core_xml', methods: ['GET', 'POST'])]
+    #[Route(path: '/user/{username}/items/{id}/generate-dublincore-xml', name: 'app_shared_item_generate_dublin_core_xml', methods: ['GET', 'POST'])]
+    public function generateDublinCoreXML(Request $request, Item $item, DublinCoreXMLGenerator $dcGenerator): Response
+    {
+        $generatedXML = $dcGenerator->generateDublinCoreXML($item, $request->getSchemeAndHttpHost());
+
+        $response = new Response($generatedXML['content'],
+                            Response::HTTP_OK, 
+                            ['Content-Type' => 'text/xml']
+                        );
+
+        return $response; 
     }
 }

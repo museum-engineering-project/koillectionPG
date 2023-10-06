@@ -33,8 +33,19 @@
                         <i class="fa fa-exchange fa-fw"></i>
                     </a>
                 {% endif %}
+                <a href="{{ path('app_item_generate_dublin_core_xml', {'id': item.id}) }}" class="button"
+                    title="{{ 'tooltip.generate_dublin_core_xml'|trans }}">
+                    <i class="fa fa fa-file-code-o fa-fw"></i>
+                </a>
                 {{ include('App/_partials/_icon/_share.html.twig', {route: 'app_shared_item_show', entity: item}) }}
                 {{ include('App/_partials/_visibility.html.twig', {'visibility': item.finalVisibility}) }}
+            </div>
+        {% elseif context == 'shared' %}
+            <div class="btn-holder">
+                    <a href="{{ path('app_shared_item_generate_dublin_core_xml', {'id': item.id}) }}" class="button"
+                        title="{{ 'tooltip.generate_dublin_core_xml'|trans }}">
+                        <i class="fa fa fa-file-code-o fa-fw"></i>
+                    </a>
             </div>
         {% endif %}
     </div>
