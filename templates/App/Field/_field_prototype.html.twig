@@ -13,8 +13,16 @@
         }}) }}
     </div>
     
-    <div>
+    <div class="col s3">
         {{ form_row(form.visibility, {'label' : 'label.visibility', 'attr': {'data-controller': 'select--field-visibility'}} ) }}
+    </div>
+
+    <div class="col s1 icon-holder">
+        <i class="fa fa-remove fa-fw removeDatum" data-action="click->template-field#remove" style="color: black"></i>
+    </div>
+
+    <div>
+        {{ form_row(form.position, {'attr': {'class' : 'position', 'data-template-field-target': 'position'}}) }}
     </div>
 
     <div class="col s3">
@@ -23,12 +31,5 @@
                 'data-controller': 'select--default'
             }}) }}
         </span>
-    </div>
-    <div>
-        {{ form_row(form.position, {'attr': {'class' : 'position', 'data-template-field-target': 'position'}}) }}
-    </div>
-
-    <div class="col s1 icon-holder">
-        <i class="fa fa-remove fa-fw removeDatum" data-action="click->template-field#remove"></i>
     </div>
 </div>
