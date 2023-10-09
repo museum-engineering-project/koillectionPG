@@ -8,6 +8,7 @@ use App\Entity\Datum;
 use App\Entity\Item;
 use App\Entity\Loan;
 use App\Entity\Template;
+use App\Enum\VisibilityEnum;
 use App\Form\Type\Entity\ItemType;
 use App\Form\Type\Entity\LoanType;
 use App\Form\Type\Model\ScrapingItemType;
@@ -65,6 +66,7 @@ class ItemController extends AbstractController
                     ->setType($field->getType())
                     ->setPosition($field->getPosition())
                     ->setChoiceList($field->getChoiceList())
+                    ->setVisibility($field->getVisibility())
                 );
             }
         }
