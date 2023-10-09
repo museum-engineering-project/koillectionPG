@@ -199,5 +199,23 @@
         <target>Listenelement Wert</target>
       </segment>
     </unit>
+    <unit id="Ne6EV8v" name="global.visibilities.internal.field-description">
+      <segment state="translated">
+        <source>Only authenticated users can see this field</source>
+        <target>Interne Beschreibung</target>
+      </segment>
+    </unit>
+    <unit id="nlSC2eZ" name="global.visibilities.public.field-description">
+      <segment state="translated">
+        <source>Anyone can see this field</source>
+        <target>Öffentliche Beschreibung</target>
+      </segment>
+    </unit>
+    <unit id="t8djlL3" name="global.visibilities.private.field-description">
+      <segment state="translated">
+        <source>Only I can see this field</source>
+        <target>Private Beschreibung</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
