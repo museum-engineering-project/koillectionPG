@@ -14,6 +14,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Attribute\Upload;
 use App\Enum\DatumTypeEnum;
+use App\Enum\VisibilityEnum;
 use App\Repository\DatumRepository;
 use App\Validator as AppAssert;
 use Doctrine\DBAL\Types\Types;
@@ -131,6 +132,11 @@ class Datum implements \Stringable
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     #[Groups(['datum:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(type: Types::STRING, length: 10)]
+    #[Groups(['datum:read', 'datum:write'])]
+    #[Assert\Choice(choices: VisibilityEnum::VISIBILITIES)]
+    private string $visibility = VisibilityEnum::VISIBILITY_PUBLIC;
 
     public function __construct()
     {
@@ -384,6 +390,18 @@ class Datum implements \Stringable
     public function setChoiceList(?ChoiceList $choiceList): Datum
     {
         $this->choiceList = $choiceList;
+
+        return $this;
+    }
+
+    public function getVisibility(): ?string
+    {
+        return $this->visibility;
+    }
+
+    public function setVisibility(string $visibility): Datum
+    {
+        $this->visibility = $visibility;
 
         return $this;
     }
