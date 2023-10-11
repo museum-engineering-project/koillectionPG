@@ -9,6 +9,7 @@ use Symfony\Component\Form\AbstractType;
 use App\Enum\LabelSizeEnum;
 use App\Enum\OrientationEnum;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -24,6 +25,9 @@ class LabelType extends AbstractType
             ->add('orientation', ChoiceType::class, [
                 'choices' => array_flip(OrientationEnum::getOrientations()),
                 'required' => true,
+            ])
+            ->add('fontSize', IntegerType::class, [
+                'required' => true
             ])
         ;
     }

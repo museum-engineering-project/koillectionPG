@@ -9,6 +9,7 @@ class Label
     private Item|Collection|null $object = null;
     private ?string $labelSize = null;
     private ?string $orientation = null;
+    private int $fontSize = 12;
 
     public function getObject(): Item|Collection|null
     {
@@ -42,6 +43,18 @@ class Label
     public function setOrientation(?string $orientation): self
     {
         $this->orientation = $orientation;
+
+        return $this;
+    }
+
+    public function getFontSize(): int
+    {
+        return $this->fontSize;
+    }
+
+    public function setFontSize(int $fontSize): self
+    {
+        $this->fontSize = $fontSize;
 
         return $this;
     }

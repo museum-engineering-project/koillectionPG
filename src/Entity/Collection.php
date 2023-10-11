@@ -477,4 +477,15 @@ class Collection implements LoggableInterface, BreadcrumbableInterface, Cacheabl
 
         return $this->data->matching($criteria);
     }
+
+    public function getPublicDataTexts(): DoctrineCollection
+    {
+        $criteria = Criteria::create();
+        $expressionBuilder = Criteria::expr();
+        $criteria->where($expressionBuilder->in('type', DatumTypeEnum::TEXT_TYPES))
+            ->andWhere($expressionBuilder->eq('visibility', VisibilityEnum::VISIBILITY_PUBLIC))
+            ->orderBy(['position' => Criteria::ASC]);
+
+        return $this->data->matching($criteria);
+    }
 }

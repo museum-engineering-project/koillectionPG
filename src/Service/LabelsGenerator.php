@@ -40,7 +40,10 @@ class LabelsGenerator
     {
         $labelSize = $label->getLabelSize();
         $orientation = $label->getOrientation();
+        $fontSize = $label->getFontSize();
         $object = $label->getObject();
+        $objectName = $object instanceof Item ? $object->getName() : $object->getTitle();
+        $objectData = $object->getPublicDataTexts();
         $cssOrientation = $orientation == OrientationEnum::ORIENTATION_VERTICAL ? "portrait" : "landscape";
 
         $qrCodeImg = $this->generateQrCode($object);
@@ -48,9 +51,11 @@ class LabelsGenerator
         $htmlContent = $this->twig->render('App/Label/label.html.twig', [
             'qrCode' => $qrCodeImg,
             'labelSize' => $labelSize,
+            'fontSize' => $fontSize,
             'orientation' => $orientation,
             'css_orientation' => $cssOrientation,
-            'object' => $object
+            'objectName' => $objectName,
+            'objectData' => $objectData
         ]);
         
         $dompdf = new Dompdf();
@@ -59,7 +64,6 @@ class LabelsGenerator
         $dompdf->render();
 
         $type = $object instanceof Item ? 'item' : 'collection';
-        $objectName = $type == "item" ? $object->getName() : $object->getTitle();
         $filename = "{$type}_label_{$labelSize}.pdf";
 
         return array('content' => $dompdf->output(),

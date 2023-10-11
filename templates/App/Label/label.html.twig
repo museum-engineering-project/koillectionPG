@@ -2,6 +2,7 @@
 
 <html size="{{ labelSize }}">
     <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         {# External css doesn't work when creating pdf file
         <link href="{{ absolute_url(asset("build/label_style.css")) }}" rel="stylesheet" type="text/css">
         #}
@@ -9,6 +10,10 @@
             @page {
                 size: {{ labelSize }} {{ css_orientation }};
                 margin: 0;
+            }
+
+            body { 
+                font-family: DejaVu Sans;
             }
               
             .label {
@@ -61,7 +66,7 @@
 
             .content {
                 margin: 0 0;
-                font-size: 12pt;
+                font-size: {{ fontSize }}pt;
                 overflow: auto;
             }
 
@@ -130,8 +135,8 @@
     <body>
         <div class="label" size="{{ labelSize }}" orientation="{{ orientation }}">
             <div class="content">
-                <h2>{{ object.Name }}</h2>
-                {% for datum in object.getPublicDataTexts() %}
+                <h2>{{ objectName }}</h2>
+                {% for datum in objectData %}
                     <p>
                        <b>{{ datum.label }}:</b> {{ datum.value }}
                     </p>
