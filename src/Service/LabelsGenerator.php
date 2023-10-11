@@ -50,7 +50,7 @@ class LabelsGenerator
             'labelSize' => $labelSize,
             'orientation' => $orientation,
             'css_orientation' => $cssOrientation,
-            'object' => $object,
+            'object' => $object
         ]);
         
         $dompdf = new Dompdf();
@@ -59,6 +59,7 @@ class LabelsGenerator
         $dompdf->render();
 
         $type = $object instanceof Item ? 'item' : 'collection';
+        $objectName = $type == "item" ? $object->getName() : $object->getTitle();
         $filename = "{$type}_label_{$labelSize}.pdf";
 
         return array('content' => $dompdf->output(),

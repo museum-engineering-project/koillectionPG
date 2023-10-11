@@ -7,10 +7,7 @@
         #}
         <style>
             @page {
-                size: A4 {{ css_orientation }};
-            }
-
-            html[size="A4"] {
+                size: {{ labelSize }} {{ css_orientation }};
                 margin: 0;
             }
               
@@ -79,6 +76,12 @@
                 float: left;
             }
 
+            h2 {
+                margin: 0;
+                padding: 0.7em 0;
+                text-align: center;
+            }
+
             p {
                 margin: 0;
                 padding: 0;
@@ -127,7 +130,8 @@
     <body>
         <div class="label" size="{{ labelSize }}" orientation="{{ orientation }}">
             <div class="content">
-                {% for datum in object.dataTexts %}
+                <h2>{{ object.Name }}</h2>
+                {% for datum in object.getPublicDataTexts() %}
                     <p>
                        <b>{{ datum.label }}:</b> {{ datum.value }}
                     </p>
