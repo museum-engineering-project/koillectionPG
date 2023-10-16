@@ -30,6 +30,7 @@ docker-compose.yml
 !/public/uploads/.gitkeep
 /public/tmp/*
 !public/tmp/.gitkeep
+/letsencrypt/
 
 /.idea/*
 ###> lexik/jwt-authentication-bundle ###
