@@ -15,7 +15,7 @@ RUN addgroup --gid "$PGID" "$USER" && \
     adduser --gecos '' --no-create-home --disabled-password --uid "$PUID" --gid "$PGID" "$USER" && \
 # Install some basics dependencies
     apt-get update && \
-    apt-get install -y curl lsb-release software-properties-common gnupg2 && \
+    apt-get install -y curl lsb-release software-properties-common gnupg2 vim && \
 # PHP
     add-apt-repository ppa:ondrej/php && \
 # Nodejs
@@ -75,13 +75,13 @@ RUN addgroup --gid "$PGID" "$USER" && \
     cp /var/www/koillection/docker/default.conf /etc/nginx/nginx.conf && \
     cp /var/www/koillection/docker/php.ini /etc/php/8.2/fpm/conf.d/php.ini
 
-EXPOSE 80
+EXPOSE 443
 
 VOLUME /uploads
 
 WORKDIR /var/www/koillection
 
-HEALTHCHECK CMD curl --fail http://localhost:80/ || exit 1
+HEALTHCHECK CMD curl --fail http://localhost:443/ || exit 1
 
 ENTRYPOINT ["sh", "/var/www/koillection/docker/entrypoint.sh" ]
 
