@@ -1,0 +1,80 @@
+version: '3'
+
+services:
+    koillection:
+        # TODO: Once koillectionPG is published to Dockerhub, replace with koillectionPG/koillectionPG:latest
+        # image: koillection/koillection:latest
+        build:
+          dockerfile: Dockerfile
+        container_name: koillection
+        restart: unless-stopped
+        environment:
+            - APP_ENV=prod
+            - APP_DEBUG=0
+            - DB_DRIVER=pdo_mysql
+            - DB_NAME=koillection
+            - DB_HOST=mysql
+            - DB_PORT=3306
+            - DB_USER=root
+            - DB_PASSWORD=password
+            - DB_VERSION=12.2
+            - PHP_TZ=Europe/Warsaw
+            - HTTPS_ENABLED=1
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.koillection.entrypoints=websecure"
+            - "traefik.http.routers.koillection.rule=Host(`127.0.0.1`)" # || Host(`YOUR_IP_OR_DOMAIN`) "
+            - "traefik.http.routers.koillection.tls=true"
+        depends_on:
+            - mysql
+
+    mysql:
+        container_name: mysql
+        image: mysql:latest
+        restart: always
+        environment:
+            - MYSQL_DATABASE=koillection
+            - MYSQL_ROOT_PASSWORD=password
+        volumes:
+            - "./docker/volumes/mysql:/var/lib/mysql"
+        labels:
+            - "traefik.enable=false"
+
+    traefik:
+      container_name: traefik
+      image: traefik:latest
+      restart: unless-stopped
+      command:
+        # - "--log.level=DEBUG" # Enable DEBUG logs (docker logs traefik)
+        - "--api.insecure=false" # Set to true to enable access to Traefik GUI.
+        - "--providers.docker=true"
+        - "--providers.docker.exposedbydefault=false"
+        - "--entrypoints.web.address=:80"
+        - "--entrypoints.websecure.address=:443"
+        - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+        - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+        # if lets_encrypt_cert
+        # Note: Requires port 80 unblocked for HTTP ACME Challenge
+        #- "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+        #- "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+        #- "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+        #- "--certificatesresolvers.myresolver.acme.email=user@domain.com" # Replace with your email
+        #- "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+        # endif lets_encrypt_cert
+        # if own_cert
+        # - --providers.file.directory=/etc/traefik/dynamic
+        # endif own_cert
+      ports:
+        - "80:80"
+        - "443:443"
+      volumes:
+        - "/var/run/docker.sock:/var/run/docker.sock:ro"
+        # if lets_encrypt_cert
+        # - "./letsencrypt:/letsencrypt"
+        # endif lets_encrypt_cert
+        # if own_cert
+        # - "./certs:/etc/certs"
+        # - "./docker/traefik-certs.yml:/etc/traefik/dynamic/traefik-certs.yml"
+        # endif own_cert
+      labels:
+        - "traefik.enable=true"
