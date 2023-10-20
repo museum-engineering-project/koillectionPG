@@ -4,7 +4,7 @@
 {% if values|length > 1 %}
     <ul class="datum-list">
         {% for value in values %}
-            <li>{{ value }}</li>
+            <li>{{ value|transMlang(app.user.locale) }}</li>
         {% endfor %}
     </ul>
 {% else %}

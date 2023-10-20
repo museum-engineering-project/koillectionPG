@@ -15,6 +15,34 @@ class DateRuntime implements RuntimeExtensionInterface
     ) {
     }
 
+    public function transMlang(?string $text, ?string $locale): string
+    {
+        if ($text === null) {
+            return "";
+        }
+        
+        $locale = preg_quote($locale);
+
+        $pattern = "/{mlang " . $locale . "}.*?{mlang}/";
+        $matches = [];
+        preg_match_all($pattern, $text, $matches);
+
+        // remove mlang tags of matched locale while keeping their content
+        foreach ($matches[0] as &$match) {
+            $originalMatch = $match;
+            
+            $match = str_replace("{mlang " . $locale . "}", "", $match);
+            $match = str_replace("{mlang}", "", $match);
+            
+            $text = str_replace($originalMatch, $match, $text);
+        }
+
+        // remove all remaining (unmatched) mlang tags and their content
+        $text = preg_replace("/{mlang .*?}.*?{mlang}/", '', $text);
+
+        return $text;
+    }
+
     public function timeAgo(\DateTimeImmutable $ago): string
     {
         $parts = $this->getIntervalParts(new \DateTimeImmutable(), $ago);
