@@ -17,6 +17,10 @@ class OrientationEnum
 
     public static function getOrientations(): array
     {
-        return self::ORIENTATIONS;
+        return [
+            self::ORIENTATION_VERTICAL => 'global.generate_label.orientation.vertical',
+            self::ORIENTATION_HORIZONTAL => 'global.generate_label.orientation.horizontal'
+
+        ];
     }
 }

@@ -3509,6 +3509,59 @@
       <segment state="translated">
         <source>Are you sure you want to delete this choice list ? It will be permanently lost...</source>
         <target>Czy na pewno chcesz usunąć tę listę wyboru? Nie można cofnąć tej akcji.</target>
+    </unit>
+    <unit id="cnknef3" name="tooltip.generate_label">
+      <segment state="translated">
+        <source>Generate label</source>
+        <target>Generuj etykietę</target>
+      </segment>
+    </unit>
+    <unit id="1bp25z3" name="label.labels_label_size">
+      <segment state="translated">
+        <source>Label size</source>
+        <target>Rozmiar etykiety</target>
+      </segment>
+    </unit>
+    <unit id="ouu4dxj" name="label.labels_orientation">
+      <segment state="translated">
+        <source>Orientation</source>
+        <target>Orientacja</target>
+      </segment>
+    </unit>
+    <unit id="at37flj" name="label.labels_font_size">
+      <segment state="translated">
+        <source>Font size</source>
+        <target>Rozmiar czcionki</target>
+      </segment>
+    </unit>
+    <unit id="oryhxo2" name="btn.download">
+      <segment state="translated">
+        <source>Download</source>
+        <target>Pobierz</target>
+      </segment>
+    </unit>
+    <unit id="zv3pm91" name="title.generate_label_collection">
+      <segment state="translated">
+        <source>Generate label for collection {collection}</source>
+        <target>Generuj etykietę dla kolekcji {collection}</target>
+      </segment>
+    </unit>
+    <unit id="dmsdxq5" name="title.generate_label_item">
+      <segment state="translated">
+        <source>Generate label for item {item}</source>
+        <target>Generuj etykietę dla przedmiotu {item}</target>
+      </segment>
+    </unit>
+    <unit id="3nlb4cf" name="global.generate_label.orientation.horizontal">
+      <segment state="translated">
+        <source>Horizontal</source>
+        <target>Pozioma</target>
+      </segment>
+    </unit>
+    <unit id="7r4c4xc" name="global.generate_label.orientation.vertical">
+      <segment state="translated">
+        <source>Vertical</source>
+        <target>Pionowa</target>
       </segment>
     </unit>
   </file>

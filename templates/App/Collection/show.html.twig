@@ -51,10 +51,6 @@
             <div class="btn-holder">
                 <div class="left">
                     {% if context == 'default' %}
-                        <a href="{{ path('app_collection_generate_label', {'id': collection.id}) }}" class="button"
-                            title="{{ 'Generate label' }}">
-                            <i class="fa fa-file-text fa-fw"></i>
-                        </a>
                         <a href="{{ path('app_item_add', {'collection': collection.id}) }}" class="button"
                            title="{{ 'tooltip.add_item'|trans }}">
                             <i class="fa fa-plus fa-fw"></i>
@@ -66,6 +62,10 @@
                         <a href="{{ path('app_collection_edit', {'id': collection.id}) }}" class="button"
                            title="{{ 'tooltip.edit'|trans }}">
                             <i class="fa fa-pencil fa-fw"></i>
+                        </a>
+                        <a href="{{ path('app_collection_generate_label', {'id': collection.id}) }}" class="button"
+                           title="{{ 'tooltip.generate_label'|trans }}">
+                           <i class="fa fa-file-text fa-fw"></i>
                         </a>
                         {{ include('App/_partials/_icon/_delete.html.twig', {
                             path: path('app_collection_delete', {id: collection.id}),

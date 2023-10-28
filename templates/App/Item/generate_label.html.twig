@@ -12,23 +12,23 @@
 
 {% block content %}
     <div class="title-block">
-        <h1>{{ 'Generate label for item'|trans({'item': item.name}) }}</h1>
+        <h1>{{ 'title.generate_label_item'|trans({'item': item.name}) }}</h1>
     </div>
 
     <div class="content-block">
         {{ form_start(form) }}
         <div class="row">
             <div class="col s12 l5 offset-l1 xl4 offset-xl2">
-                {{ form_row(form.labelSize, {'label' : 'Label size', 'attr': {'data-controller': 'select--default'}} ) }}
-                {{ form_row(form.orientation, {'label' : 'Orientation', 'attr': {'data-controller': 'select--default'}} ) }}
-                {{ form_row(form.fontSize, {'label' : 'Font size'} ) }}
+                {{ form_row(form.labelSize, {'label' : 'label.labels_label_size', 'attr': {'data-controller': 'select--default'}} ) }}
+                {{ form_row(form.orientation, {'label' : 'label.labels_orientation', 'attr': {'data-controller': 'select--default'}} ) }}
+                {{ form_row(form.fontSize, {'label' : 'label.labels_font_size'} ) }}
             </div>
         </div>
 
         <div class="center-align form-btn-holder">
-            <button type="submit" class="btn waves-effect waves-light">{{ 'Download' }}</button>
+            <button type="submit" class="btn waves-effect waves-light">{{ 'btn.download'|trans }}</button>
             <a href="{{ path('app_item_show', { id : item.id }) }}"
-               class="waves-effect waves-light btn btn-cancel">{{ 'Back'}}</a>
+               class="waves-effect waves-light btn btn-cancel">{{ 'btn.cancel'|trans }}</a>
         </div>
         {{ form_end(form) }}
     </div>

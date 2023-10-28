@@ -3511,5 +3511,59 @@
         <target>Tem certeza de que deseja excluir esta lista de opções? Será perdido permanentemente...</target>
       </segment>
     </unit>
+    <unit id="cnknef3" name="tooltip.generate_label">
+      <segment state="translated">
+        <source>Generate label</source>
+        <target>Gerar rótulo</target>
+      </segment>
+    </unit>
+    <unit id="1bp25z3" name="label.labels_label_size">
+      <segment state="translated">
+        <source>Label size</source>
+        <target>Tamanho da etiqueta</target>
+      </segment>
+    </unit>
+    <unit id="ouu4dxj" name="label.labels_orientation">
+      <segment state="translated">
+        <source>Orientation</source>
+        <target>Orientação</target>
+      </segment>
+    </unit>
+    <unit id="at37flj" name="label.labels_font_size">
+      <segment state="translated">
+        <source>Font size</source>
+        <target>Tamanho da fonte</target>
+      </segment>
+    </unit>
+    <unit id="oryhxo2" name="btn.download">
+      <segment state="translated">
+        <source>Download</source>
+        <target>Download</target>
+      </segment>
+    </unit>
+    <unit id="zv3pm91" name="title.generate_label_collection">
+      <segment state="translated">
+        <source>Generate label for collection {collection}</source>
+        <target>Gerar etiqueta para coleção {collection}</target>
+      </segment>
+    </unit>
+    <unit id="dmsdxq5" name="title.generate_label_item">
+      <segment state="translated">
+        <source>Generate label for item {item}</source>
+        <target>Gerar rótulo para item {item}</target>
+      </segment>
+    </unit>
+    <unit id="3nlb4cf" name="global.generate_label.orientation.horizontal">
+      <segment state="translated">
+        <source>Horizontal</source>
+        <target>Horizontal</target>
+      </segment>
+    </unit>
+    <unit id="7r4c4xc" name="global.generate_label.orientation.vertical">
+      <segment state="translated">
+        <source>Vertical</source>
+        <target>Vertical</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

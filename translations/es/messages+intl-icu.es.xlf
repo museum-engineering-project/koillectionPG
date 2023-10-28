@@ -3511,5 +3511,59 @@
         <target>¿Estás seguro que quieres eliminar eesta lista de opciones? Esta acción no se puede deshacer.</target>
       </segment>
     </unit>
+    <unit id="cnknef3" name="tooltip.generate_label">
+      <segment state="translated">
+        <source>Generate label</source>
+        <target>Generar etiqueta</target>
+      </segment>
+    </unit>
+    <unit id="1bp25z3" name="label.labels_label_size">
+      <segment state="translated">
+        <source>Label size</source>
+        <target>Tamaño de la etiqueta</target>
+      </segment>
+    </unit>
+    <unit id="ouu4dxj" name="label.labels_orientation">
+      <segment state="translated">
+        <source>Orientation</source>
+        <target>Orientación</target>
+      </segment>
+    </unit>
+    <unit id="at37flj" name="label.labels_font_size">
+      <segment state="translated">
+        <source>Font size</source>
+        <target>Tamaño de fuente</target>
+      </segment>
+    </unit>
+    <unit id="oryhxo2" name="btn.download">
+      <segment state="translated">
+        <source>Download</source>
+        <target>Descargar</target>
+      </segment>
+    </unit>
+    <unit id="zv3pm91" name="title.generate_label_collection">
+      <segment state="translated">
+        <source>Generate label for collection {collection}</source>
+        <target>Generar etiqueta para colección {collection}</target>
+      </segment>
+    </unit>
+    <unit id="dmsdxq5" name="title.generate_label_item">
+      <segment state="translated">
+        <source>Generate label for item {item}</source>
+        <target>Generar etiqueta para el artículo {item}</target>
+      </segment>
+    </unit>
+    <unit id="3nlb4cf" name="global.generate_label.orientation.horizontal">
+      <segment state="translated">
+        <source>Horizontal</source>
+        <target>Horizontal</target>
+      </segment>
+    </unit>
+    <unit id="7r4c4xc" name="global.generate_label.orientation.vertical">
+      <segment state="translated">
+        <source>Vertical</source>
+        <target>Vertical</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
