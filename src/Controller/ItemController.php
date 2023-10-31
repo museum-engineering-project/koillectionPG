@@ -231,7 +231,9 @@ class ItemController extends AbstractController
         $label = new Label();
         $label->setObject($item);
 
-        $form = $this->createForm(LabelType::class, $label);
+        $form = $this->createForm(LabelType::class, $label, [
+            'objects' => [$item]
+        ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $generatedLabel = $labelsGenerator->generateLabel($label);

@@ -87,8 +87,15 @@ class LabelsGenerator
         $dompdf->loadHtml($htmlContent);
         $dompdf->render();
 
-        $type = $object instanceof Item ? 'item' : 'collection';
-        $filename = "{$type}_label_{$labelSize}.pdf";
+        if (count($object) > 1)
+        {
+            $filename = "multiple_items_labels_{$labelSize}.pdf";
+        }
+        else
+        {
+            $type = $object[0] instanceof Item ? 'item' : 'collection';
+            $filename = "{$type}_label_{$labelSize}.pdf";
+        }
 
         return array('content' => $dompdf->output(),
                      'filename' => $filename);

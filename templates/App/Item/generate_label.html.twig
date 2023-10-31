@@ -1,6 +1,6 @@
 {% extends 'layout.html.twig' %}
 
-{% set breadcrumb = buildBreadcrumb([{'route': 'app_collection_index', 'trans': 'menu.collections'}], item, 'Generate label') %}
+{% set breadcrumb = buildBreadcrumb([{'route': 'app_collection_index', 'trans': 'menu.collections'}], item, 'breadcrumb.add_generate_label') %}
 
 {% block title %}
     {{ renderTitle(breadcrumb) }}
@@ -22,7 +22,26 @@
                 {{ form_row(form.labelSize, {'label' : 'label.labels_label_size', 'attr': {'data-controller': 'select--default'}} ) }}
                 {{ form_row(form.orientation, {'label' : 'label.labels_orientation', 'attr': {'data-controller': 'select--default'}} ) }}
                 {{ form_row(form.fontSize, {'label' : 'label.labels_font_size'} ) }}
+                {{ form_row(form.qrSize, {'label' : 'label.labels_qr_size'} ) }}
+                {{ form_row(form.textAlignment, {'label' : 'label.labels_text_alignment', 'attr': {'data-controller': 'select--default'}} ) }}
             </div>
+        </div>
+
+        <h3 class="header col s12">Selection of fields</h3>
+        <div class="row">
+            <div class="col s12 l5 offset-l1 xl4 offset-xl2">
+                <strong>{{ form_row(form.selectAllFields, {'label' : 'label.labels_select_deselect_all', 'attr': {'class': 'selectAllFields'}}) }}</strong>
+                <hr>
+            </div>
+            {% for field in form.fields.children|sort %}
+                {% if loop.index is divisible by(2) %}
+                    <div class="col s12 l5 xl4">
+                {% else %}
+                    <div class="col s12 l5 offset-l1 xl4 offset-xl2">
+                {% endif %}
+                    {{ form_row(field, {'attr': {'class': 'fieldCheck'}}) }}
+                </div>
+            {% endfor %}
         </div>
 
         <div class="center-align form-btn-holder">
