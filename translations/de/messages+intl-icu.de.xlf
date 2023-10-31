@@ -3544,13 +3544,13 @@
     <unit id="zv3pm91" name="title.generate_label_collection">
       <segment state="translated">
         <source>Generate label for collection {collection}</source>
-        <target>Label für Sammlung {collection} generieren</target>
+        <target>Etikett für Sammlung {collection} generieren</target>
       </segment>
     </unit>
     <unit id="dmsdxq5" name="title.generate_label_item">
       <segment state="translated">
         <source>Generate label for item {item}</source>
-        <target>Label für Artikel {item} generieren</target>
+        <target>Etikett für Artikel {item} generieren</target>
       </segment>
     </unit>
     <unit id="3nlb4cf" name="global.generate_label.orientation.horizontal">
@@ -3563,6 +3563,54 @@
       <segment state="translated">
         <source>Vertical</source>
         <target>Vertikal</target>
+      </segment>
+    </unit>
+    <unit id="vg9v4s5" name="tooltip.generate_label_collection">
+      <segment state="translated">
+        <source>Generate label for collection</source>
+        <target>Etikett für Sammlung generieren</target>
+      </segment>
+    </unit>
+    <unit id="bfzVhF0" name="tooltip.generate_label_multiple_items">
+      <segment state="translated">
+        <source>Generate labels for selected items in this collection</source>
+        <target>Generieren Sie Etiketten für ausgewählte Elemente in dieser Sammlung</target>
+      </segment>
+    </unit>
+    <unit id="OA2g7xf" name="breadcrumb.add_generate_label">
+      <segment state="translated">
+        <source>Generate label</source>
+        <target>Etikett generieren</target>
+      </segment>
+    </unit>
+    <unit id="OdwQXGP" name="label.labels_qr_size">
+      <segment state="translated">
+        <source>QR Code size (in %)</source>
+        <target>Größe des QR-Codes (in %)</target>
+      </segment>
+    </unit>
+    <unit id="MpROcte" name="label.labels_text_alignment">
+      <segment state="translated">
+        <source>Text alignment</source>
+        <target>Textausrichtung</target>
+      </segment>
+    </unit>
+    <unit id="TbLTFjf" name="label.labels_select_deselect_all">
+      <segment state="translated">
+        <source>Select/Deselect all</source>
+        <target>Alle auswählen/abwählen</target>
+      </segment>
+    </unit>
+    <unit id="ttMcgqj" name="global.generate_label.textAlignment_left">
+      <segment state="translated">
+        <source>left</source>
+        <target>Linke</target>
+      </segment>
+    </unit>
+    <unit id="EpgL03v" name="global.generate_label.textAlignment_center">
+      <segment state="translated">
+        <source>center</source>
+        <target>Center</target>
       </segment>
     </unit>
   </file>

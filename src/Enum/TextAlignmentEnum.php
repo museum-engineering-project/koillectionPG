@@ -11,8 +11,8 @@ class TextAlignmentEnum
     public const TEXT_ALIGN_CENTER = 'center';
 
     public const TEXT_ALIGNMENTS = [
-        self::TEXT_ALIGN_LEFT => self::TEXT_ALIGN_LEFT,
-        self::TEXT_ALIGN_CENTER => self::TEXT_ALIGN_CENTER
+        self::TEXT_ALIGN_LEFT => 'global.generate_label.textAlignment_left',
+        self::TEXT_ALIGN_CENTER => 'global.generate_label.textAlignment_center'
     ];
 
     public static function getTextAlignments(): array

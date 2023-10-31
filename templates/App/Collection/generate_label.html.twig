@@ -1,6 +1,6 @@
 {% extends 'layout.html.twig' %}
 
-{% set breadcrumb = buildBreadcrumb([{'route': 'app_collection_index', 'trans': 'menu.collections'}], collection, 'Generate label') %}
+{% set breadcrumb = buildBreadcrumb([{'route': 'app_collection_index', 'trans': 'menu.collections'}], collection, 'breadcrumb.add_generate_label') %}
 
 {% block title %}
     {{ renderTitle(breadcrumb) }}
@@ -23,8 +23,8 @@
                 {{ form_row(form.labelSize, {'label' : 'label.labels_label_size', 'attr': {'data-controller': 'select--default'}} ) }}
                 {{ form_row(form.orientation, {'label' : 'label.labels_orientation', 'attr': {'data-controller': 'select--default'}} ) }}
                 {{ form_row(form.fontSize, {'label' : 'label.labels_font_size'} ) }}
-                {{ form_row(form.qrSize, {'label' : 'QR Code size (as % of the whole label)'} ) }}
-                {{ form_row(form.textAlignment, {'label' : 'Text alignment', 'attr': {'data-controller': 'select--default'}} ) }}
+                {{ form_row(form.qrSize, {'label' : 'label.labels_qr_size'} ) }}
+                {{ form_row(form.textAlignment, {'label' : 'label.labels_text_alignment', 'attr': {'data-controller': 'select--default'}} ) }}
             </div>
         </div>
 
@@ -32,7 +32,7 @@
         <h3 class="header col s12">Selection of items</h3>
         <div class="row">
             <div class="col s12 l5 offset-l1 xl4 offset-xl2">
-                <strong>{{ form_row(form.selectAllItems, {'label' : 'Select/Deselect all', 'attr': {'class': 'selectAllItems'}}) }}</strong>
+                <strong>{{ form_row(form.selectAllItems, {'label' : 'label.labels_select_deselect_all', 'attr': {'class': 'selectAllItems'}}) }}</strong>
                 <hr>
             </div>
             {% for item in form.object.children|sort %}
@@ -50,7 +50,7 @@
         <h3 class="header col s12">Selection of fields</h3>
         <div class="row">
             <div class="col s12 l5 offset-l1 xl4 offset-xl2">
-                <strong>{{ form_row(form.selectAllFields, {'label' : 'Select/Deselect all', 'attr': {'class': 'selectAllFields'}}) }}</strong>
+                <strong>{{ form_row(form.selectAllFields, {'label' : 'label.labels_select_deselect_all', 'attr': {'class': 'selectAllFields'}}) }}</strong>
                 <hr>
             </div>
             {% for field in form.fields.children|sort %}

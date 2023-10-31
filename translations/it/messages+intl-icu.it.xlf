@@ -3565,5 +3565,53 @@
         <target>Verticale</target>
       </segment>
     </unit>
+    <unit id="vg9v4s5" name="tooltip.generate_label_collection">
+      <segment state="translated">
+        <source>Generate label for collection</source>
+        <target>Genera etichetta per la raccolta</target>
+      </segment>
+    </unit>
+    <unit id="bfzVhF0" name="tooltip.generate_label_multiple_items">
+      <segment state="translated">
+        <source>Generate labels for selected items in this collection</source>
+        <target>Genera etichette per gli elementi selezionati in questa raccolta</target>
+      </segment>
+    </unit>
+    <unit id="OA2g7xf" name="breadcrumb.add_generate_label">
+      <segment state="translated">
+        <source>Generate label</source>
+        <target>Genera etichetta</target>
+      </segment>
+    </unit>
+    <unit id="OdwQXGP" name="label.labels_qr_size">
+      <segment state="translated">
+        <source>QR Code size (in %)</source>
+        <target>Dimensioni del codice QR (in %)</target>
+      </segment>
+    </unit>
+    <unit id="MpROcte" name="label.labels_text_alignment">
+      <segment state="translated">
+        <source>Text alignment</source>
+        <target>Allineamento del testo</target>
+      </segment>
+    </unit>
+    <unit id="TbLTFjf" name="label.labels_select_deselect_all">
+      <segment state="translated">
+        <source>Select/Deselect all</source>
+        <target>Seleziona/Deseleziona tutto</target>
+      </segment>
+    </unit>
+    <unit id="ttMcgqj" name="global.generate_label.textAlignment_left">
+      <segment state="translated">
+        <source>left</source>
+        <target>sinistra</target>
+      </segment>
+    </unit>
+    <unit id="EpgL03v" name="global.generate_label.textAlignment_center">
+      <segment state="translated">
+        <source>center</source>
+        <target>centro</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
