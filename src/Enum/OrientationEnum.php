@@ -11,16 +11,12 @@ class OrientationEnum
     public const ORIENTATION_HORIZONTAL = 'horizontal';
 
     public const ORIENTATIONS = [
-        self::ORIENTATION_VERTICAL => self::ORIENTATION_VERTICAL,
-        self::ORIENTATION_HORIZONTAL => self::ORIENTATION_HORIZONTAL
+        self::ORIENTATION_VERTICAL => 'global.generate_label.orientation.vertical',
+        self::ORIENTATION_HORIZONTAL => 'global.generate_label.orientation.horizontal'
     ];
 
     public static function getOrientations(): array
     {
-        return [
-            self::ORIENTATION_VERTICAL => 'global.generate_label.orientation.vertical',
-            self::ORIENTATION_HORIZONTAL => 'global.generate_label.orientation.horizontal'
-
-        ];
+        return self::ORIENTATIONS;
     }
 }

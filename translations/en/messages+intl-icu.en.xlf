@@ -3565,5 +3565,17 @@
         <target>Vertical</target>
       </segment>
     </unit>
+    <unit id="vg9v4s5" name="tooltip.generate_label_collection">
+      <segment state="translated">
+        <source>Generate label for collection</source>
+        <target>Generate label for collection</target>
+      </segment>
+    </unit>
+    <unit id="6k3s6w5" name="tooltip.generate_label_items">
+      <segment state="translated">
+        <source>Generate labels for items in this collection</source>
+        <target>Generate labels for slected items in this collection</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

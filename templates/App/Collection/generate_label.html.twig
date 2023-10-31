@@ -17,12 +17,51 @@
 
     <div class="content-block">
         {{ form_start(form) }}
+        <h3 class="header col s12">Label settings</h3>
         <div class="row">
             <div class="col s12 l5 offset-l1 xl4 offset-xl2">
                 {{ form_row(form.labelSize, {'label' : 'label.labels_label_size', 'attr': {'data-controller': 'select--default'}} ) }}
                 {{ form_row(form.orientation, {'label' : 'label.labels_orientation', 'attr': {'data-controller': 'select--default'}} ) }}
                 {{ form_row(form.fontSize, {'label' : 'label.labels_font_size'} ) }}
+                {{ form_row(form.qrSize, {'label' : 'QR Code size (as % of the whole label)'} ) }}
+                {{ form_row(form.textAlignment, {'label' : 'Text alignment', 'attr': {'data-controller': 'select--default'}} ) }}
             </div>
+        </div>
+
+        {% if form.selectAllItems is defined and form.object is defined %}
+        <h3 class="header col s12">Selection of items</h3>
+        <div class="row">
+            <div class="col s12 l5 offset-l1 xl4 offset-xl2">
+                <strong>{{ form_row(form.selectAllItems, {'label' : 'Select/Deselect all', 'attr': {'class': 'selectAllItems'}}) }}</strong>
+                <hr>
+            </div>
+            {% for item in form.object.children|sort %}
+                {% if loop.index is divisible by(2) %}
+                    <div class="col s12 l5 xl4">
+                {% else %}
+                    <div class="col s12 l5 offset-l1 xl4 offset-xl2">
+                {% endif %}
+                    {{ form_row(item, {'attr': {'class': 'itemCheck'}}) }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <h3 class="header col s12">Selection of fields</h3>
+        <div class="row">
+            <div class="col s12 l5 offset-l1 xl4 offset-xl2">
+                <strong>{{ form_row(form.selectAllFields, {'label' : 'Select/Deselect all', 'attr': {'class': 'selectAllFields'}}) }}</strong>
+                <hr>
+            </div>
+            {% for field in form.fields.children|sort %}
+                {% if loop.index is divisible by(2) %}
+                    <div class="col s12 l5 xl4">
+                {% else %}
+                    <div class="col s12 l5 offset-l1 xl4 offset-xl2">
+                {% endif %}
+                    {{ form_row(field, {'attr': {'class': 'fieldCheck'}}) }}
+                </div>
+            {% endfor %}
         </div>
 
         <div class="center-align form-btn-holder">
@@ -32,4 +71,25 @@
         </div>
         {{ form_end(form) }}
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+            const selectAllItems = document.querySelector(".selectAllItems");
+            const selectAllFields = document.querySelector(".selectAllFields");
+
+            selectAllItems.addEventListener("click", () => {
+                const items = document.querySelectorAll(".itemCheck");
+                const state = selectAllItems.checked ? true : false;
+                items.forEach(item => item.checked = state);
+            });
+            selectAllFields.addEventListener("click", () => {
+                const fields = document.querySelectorAll(".fieldCheck");
+                const state = selectAllFields.checked ? true : false;
+                fields.forEach(field => field.checked = state);
+            });
+        });
+    </script>
 {% endblock %}

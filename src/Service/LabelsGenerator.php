@@ -41,23 +41,47 @@ class LabelsGenerator
         $labelSize = $label->getLabelSize();
         $orientation = $label->getOrientation();
         $fontSize = $label->getFontSize();
+        $fields = $label->getFields();
+        $qrSize = $label->getQrSize();
+        $textAlignment = $label->getTextAlignment();
         $object = $label->getObject();
-        $objectName = $object instanceof Item ? $object->getName() : $object->getTitle();
-        $objectData = $object->getPublicDataTexts();
-        $cssOrientation = $orientation == OrientationEnum::ORIENTATION_VERTICAL ? "portrait" : "landscape";
+        $htmlContent = "";
 
-        $qrCodeImg = $this->generateQrCode($object);
-
-        $htmlContent = $this->twig->render('App/Label/label.html.twig', [
-            'qrCode' => $qrCodeImg,
-            'labelSize' => $labelSize,
-            'fontSize' => $fontSize,
-            'orientation' => $orientation,
-            'css_orientation' => $cssOrientation,
-            'objectName' => $objectName,
-            'objectData' => $objectData
-        ]);
+        if (!is_array($object))
+        {
+            $object = [$object];
+        }
         
+        foreach ($object as $objectElement)
+        {
+            $objectData = [];
+            foreach ($fields as $field)
+            {
+                $datum = $objectElement->getDatumByLabelCaseInsensitive($field);
+                if ($datum != null)
+                {
+                    $objectData[$field] = $datum;
+                }
+            }
+
+            $objectName = $objectElement instanceof Item ? $objectElement->getName() : $objectElement->getTitle();
+            $cssOrientation = $orientation == OrientationEnum::ORIENTATION_VERTICAL ? "portrait" : "landscape";
+    
+            $qrCodeImg = $this->generateQrCode($objectElement);
+    
+            $htmlContent .= $this->twig->render('App/Label/label.html.twig', [
+                'qrCode' => $qrCodeImg,
+                'labelSize' => $labelSize,
+                'fontSize' => $fontSize,
+                'qrSize' => $qrSize,
+                'textAlignment' => $textAlignment,
+                'orientation' => $orientation,
+                'css_orientation' => $cssOrientation,
+                'objectName' => $objectName,
+                'objectData' => $objectData
+            ]);
+        }
+
         $dompdf = new Dompdf();
 
         $dompdf->loadHtml($htmlContent);

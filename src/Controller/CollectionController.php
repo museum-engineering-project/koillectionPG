@@ -234,15 +234,33 @@ class CollectionController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/collections/{id}/generate-label', name: 'app_collection_generate_label', methods: ['GET', 'POST'])]
-    public function generateLabel(Request $request, Collection $collection, LabelsGenerator $labelsGenerator): Response
+    #[Route(path: '/collections/{id}/generate-label/{type}', name: 'app_collection_generate_label', methods: ['GET', 'POST'])]
+    public function generateLabel(
+        Request $request,
+        Collection $collection,
+        LabelsGenerator $labelsGenerator,
+        string $type="collection"
+    ): Response
     {
         $label = new Label();
-        $label->setObject($collection);
+        
+        if ($type == "items")
+        {
+            $form = $this->createForm(LabelType::class, $label, [
+                'objects' => $collection->getItems()
+            ]);
+        }
+        else
+        {
+            $label->setObject($collection);
+            $form = $this->createForm(LabelType::class, $label, [
+                'objects' => [$collection]
+            ]);
+        }
 
-        $form = $this->createForm(LabelType::class, $label);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) 
+        {
             $generatedLabel = $labelsGenerator->generateLabel($label);
 
             // Display pdf file instead of downloading

@@ -20,6 +20,10 @@
                 margin: 0 0;
                 background-color: white;
                 border: 0.05cm solid black;
+                position: absolute;
+                left: 0px; 
+                right: 0px; 
+                overflow: hidden;
             }
 
             /* all sizes are reduced by 1mm border */ 
@@ -67,16 +71,16 @@
             .content {
                 margin: 0 0;
                 font-size: {{ fontSize }}pt;
-                overflow: auto;
+                overflow: hidden;
             }
 
             .label[orientation="vertical"] .content {
                 width: 100%;
-                height: 75%;
+                height: {{ 100 - qrSize }}%;
             }
 
             .label[orientation="horizontal"] .content {
-                width: 75%;
+                width: {{ 100 - qrSize }}%;
                 height: 100%;
                 float: left;
             }
@@ -93,6 +97,7 @@
                 padding-left: 1em;
                 padding-right: 1em;
                 padding-bottom: 0.7em;
+                text-align: {{ textAlignment }};
             }
 
             p:first-child {
@@ -108,12 +113,12 @@
             }
 
             .label[orientation="vertical"] .qrCode {
-                height: 25%;
+                height: {{ qrSize }}%;
                 width: 100%;
             }
 
             .label[orientation="horizontal"] .qrCode{
-                width: 25%;
+                width: {{ qrSize }}%;
                 height: 100%;
                 float: left;
             }
