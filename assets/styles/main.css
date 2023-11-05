@@ -2262,3 +2262,7 @@ tr {
 .fa-long-arrow-up {
     margin-left: 5px;
 }
+
+.bottom-margin {
+    margin-bottom: 30px !important;
+}
