@@ -1,6 +1,6 @@
 {% set hasChoiceList = choiceList is defined and choiceList is not null %}
 
-<div {% if template is defined %} data-template="{{ template.name }}"{% endif %} class="datum row" data-additional-data-target="datum" data-iteration="{{ iteration }}">
+<div {% if template is defined %} data-template="{{ template.name }}"{% endif %} class="datum row bottom-margin" data-additional-data-target="datum" data-iteration="{{ iteration }}">
     <div class="s12 l10 offset-l1 xl8 offset-xl2 row">
         <input type="hidden"
                id="data_{{ iteration }}_type"
@@ -32,7 +32,27 @@
         <div class="s1 hide-on-med-and-up"></div>
         <div class="s1 hide-on-med-and-up"></div>
 
-        {{ include('App/Datum/_' ~ type ~ '.html.twig') }}
+        <div class="input-field outlined col s10 offset-s1 m5">
+            <select id="data_{{ iteration }}_visibility"
+                    name="{{ entity }}[data][{{ iteration }}][visibility]"
+                    data-controller="select--field-visibility">
+            {% for visibility in getVisibilities() %}
+                <option value={{ visibility }}
+                        {% if datum is defined and datum.visibility == visibility %}
+                            selected
+                        {% elseif template is defined %}
+                            {% for field in template.fields %}
+                                {% if field.name == label and field.visibility == visibility %}
+                                    selected
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}>
+                    {{ ('global.visibilities.' ~ visibility)|trans }}
+                </option>
+            {% endfor %}
+            </select>
+            <label for="data_{{ iteration }}_visibility">{{ 'label.visibility'|trans }}</label>
+        </div>
 
         <div class="s1 icon-holder">
             <i class="fa fa-remove fa-fw removeDatum" data-action="click->additional-data#remove"></i>
@@ -59,27 +79,6 @@
             </div>
         {% endif %}
 
-        <div class="input-field outlined col s10 offset-s1 m5">
-            <select id="data_{{ iteration }}_visibility"
-                    name="{{ entity }}[data][{{ iteration }}][visibility]"
-                    data-controller="select--field-visibility"
-            >
-            {% for visibility in getVisibilities() %}
-                <option value={{ visibility }}
-                        {% if datum is defined and datum.visibility == visibility %}
-                            selected
-                        {% elseif template is defined %}
-                            {% for field in template.fields %}
-                                {% if field.name == label and field.visibility == visibility %}
-                                    selected
-                                {% endif %}
-                            {% endfor %}
-                        {% endif %}>
-                    {{ ('global.visibilities.' ~ visibility)|trans }}
-                </option>
-            {% endfor %}
-            </select>
-            <label for="data_{{ iteration }}_visibility">{{ 'label.visibility'|trans }}</label>
-        </div>
+        {{ include('App/Datum/_' ~ type ~ '.html.twig') }}
     </div>
 </div>

@@ -2296,3 +2296,6 @@ tr {
 .row-file .btn-cancel {
     padding-top: 17px;
 }
+.bottom-margin {
+    margin-bottom: 30px !important;
+}
