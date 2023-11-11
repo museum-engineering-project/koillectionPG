@@ -17,6 +17,7 @@
 
     <div class="content-block">
         {{ form_start(form) }}
+        <h3 class="header col s12">{{ 'title.label_settings'|trans }}</h3>
         <div class="row">
             <div class="col s12 l5 offset-l1 xl4 offset-xl2">
                 {{ form_row(form.labelSize, {'label' : 'label.labels_label_size', 'attr': {'data-controller': 'select--default'}} ) }}
@@ -27,7 +28,7 @@
             </div>
         </div>
 
-        <h3 class="header col s12">Selection of fields</h3>
+        <h3 class="header col s12">{{ 'title.selection_of_fields'|trans }}</h3>
         <div class="row">
             <div class="col s12 l5 offset-l1 xl4 offset-xl2">
                 <strong>{{ form_row(form.selectAllFields, {'label' : 'label.labels_select_deselect_all', 'attr': {'class': 'selectAllFields'}}) }}</strong>

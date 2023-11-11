@@ -3612,5 +3612,17 @@
         <target>do środka</target>
       </segment>
     </unit>
+    <unit id="jj2pWn9" name="title.label_settings">
+      <segment state="translated">
+        <source>Label settings</source>
+        <target>Ustawienia etykiety</target>
+      </segment>
+    </unit>
+    <unit id="8FqIbAD" name="title.selection_of_fields">
+      <segment state="translated">
+        <source>Selection of fields</source>
+        <target>Wybór pól</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

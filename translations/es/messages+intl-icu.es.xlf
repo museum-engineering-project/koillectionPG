@@ -3613,5 +3613,17 @@
         <target>centro</target>
       </segment>
     </unit>
+    <unit id="jj2pWn9" name="title.label_settings">
+      <segment state="translated">
+        <source>Label settings</source>
+        <target>Configuración de etiquetas</target>
+      </segment>
+    </unit>
+    <unit id="8FqIbAD" name="title.selection_of_fields">
+      <segment state="translated">
+        <source>Selection of fields</source>
+        <target>Selección de campos</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
