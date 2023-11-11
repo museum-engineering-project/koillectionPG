@@ -102,6 +102,7 @@
             const selectAllItems = document.querySelector(".selectAllItems");
             const selectAllFields = document.querySelector(".selectAllFields");
             const items = Array.from(document.querySelectorAll(".itemCheck"));
+            const fields = Array.from(document.querySelectorAll(".fieldCheck"));
             const submitButton = document.querySelector("#submitButton");
 
             function setSubmitButton() {
@@ -110,10 +111,37 @@
                     submitButton.setAttribute("disabled", "");
             }
 
+            function updateSelectAllItemsButton() {
+                if (items.some(i => !i.checked)) {
+                    selectAllItems.checked = false;
+                }
+                else if (items.every(i => i.checked)) {
+                    selectAllItems.checked = true;
+                }
+            }
+
+            function updateSelectAllFieldsButton() {
+                if (fields.some(i => !i.checked)) {
+                    selectAllFields.checked = false;
+                }
+                else if (fields.every(i => i.checked)) {
+                    selectAllFields.checked = true;
+                }
+            }
+
             if (items != null) {
                 items.forEach(item => {
                     item.addEventListener("click", () => {
                         setSubmitButton();
+                        updateSelectAllItemsButton();
+                    });
+                });
+            }
+
+            if (fields != null) {
+                fields.forEach(field => {
+                    field.addEventListener("click", () => {
+                        updateSelectAllFieldsButton();
                     });
                 });
             }
@@ -128,7 +156,6 @@
 
             if (selectAllFields != null) {
                 selectAllFields.addEventListener("click", () => {
-                    const fields = document.querySelectorAll(".fieldCheck");
                     const state = selectAllFields.checked ? true : false;
                     fields.forEach(field => field.checked = state);
                 });

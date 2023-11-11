@@ -66,10 +66,27 @@
     <script>
         window.addEventListener("DOMContentLoaded", () => {
             const selectAllFields = document.querySelector(".selectAllFields");
+            const fields = Array.from(document.querySelectorAll(".fieldCheck"));
+
+            function updateSelectAllFieldsButton() {
+                if (fields.some(i => !i.checked)) {
+                    selectAllFields.checked = false;
+                }
+                else if (fields.every(i => i.checked)) {
+                    selectAllFields.checked = true;
+                }
+            }
+
+            if (fields != null) {
+                fields.forEach(field => {
+                    field.addEventListener("click", () => {
+                        updateSelectAllFieldsButton();
+                    });
+                });
+            }
 
             if (selectAllFields != null) {
                 selectAllFields.addEventListener("click", () => {
-                    const fields = document.querySelectorAll(".fieldCheck");
                     const state = selectAllFields.checked ? true : false;
                     fields.forEach(field => field.checked = state);
                 });
