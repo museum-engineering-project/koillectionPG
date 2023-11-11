@@ -53,3 +53,20 @@
         {{ form_end(form) }}
     </div>
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+            const selectAllFields = document.querySelector(".selectAllFields");
+
+            if (selectAllFields != null) {
+                selectAllFields.addEventListener("click", () => {
+                    const fields = document.querySelectorAll(".fieldCheck");
+                    const state = selectAllFields.checked ? true : false;
+                    fields.forEach(field => field.checked = state);
+                });
+            }
+        });
+    </script>
+{% endblock %}

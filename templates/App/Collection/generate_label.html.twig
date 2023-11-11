@@ -80,16 +80,21 @@
             const selectAllItems = document.querySelector(".selectAllItems");
             const selectAllFields = document.querySelector(".selectAllFields");
 
-            selectAllItems.addEventListener("click", () => {
-                const items = document.querySelectorAll(".itemCheck");
-                const state = selectAllItems.checked ? true : false;
-                items.forEach(item => item.checked = state);
-            });
-            selectAllFields.addEventListener("click", () => {
-                const fields = document.querySelectorAll(".fieldCheck");
-                const state = selectAllFields.checked ? true : false;
-                fields.forEach(field => field.checked = state);
-            });
+            if (selectAllItems != null) {
+                selectAllItems.addEventListener("click", () => {
+                    const items = document.querySelectorAll(".itemCheck");
+                    const state = selectAllItems.checked ? true : false;
+                    items.forEach(item => item.checked = state);
+                });
+            }
+
+            if (selectAllFields != null) {
+                selectAllFields.addEventListener("click", () => {
+                    const fields = document.querySelectorAll(".fieldCheck");
+                    const state = selectAllFields.checked ? true : false;
+                    fields.forEach(field => field.checked = state);
+                });
+            }
         });
     </script>
 {% endblock %}
