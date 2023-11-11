@@ -47,7 +47,7 @@
         {% else %}
             {% do form.selectAllFields.setRendered() %}
             <div class="col s12 offset-l1 xl4 offset-xl2">
-                There are no fields to select.
+                {{ 'message.no_fields'|trans }}
             </div>
         {% endif %}
         </div>

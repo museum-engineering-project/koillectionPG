@@ -29,7 +29,9 @@
         </div>
 
         {% if form.selectAllItems is defined %}
-        <h3 class="header col s12">Selection of items</h3>
+        <h3 class="header col s12">
+            {{ 'title.selection_of_items'|trans }}
+        </h3>
         <div class="row">
         {% if form.object is defined and form.object is not empty %}
             <div class="col s12 l5 offset-l1 xl4 offset-xl2">
@@ -48,7 +50,7 @@
         {% elseif form.object is defined and form.object is empty %}
         {% do form.selectAllItems.setRendered() %}
             <div class="col s12 offset-l1 xl4 offset-xl2">
-                There are no items to select.
+                {{ 'message.no_items'|trans }}
             </div>
         {% endif %}
         </div>
@@ -73,7 +75,7 @@
         {% else %}
             {% do form.selectAllFields.setRendered() %}
             <div class="col s12 offset-l1 xl4 offset-xl2">
-                There are no fields to select.
+                {{ 'message.no_fields'|trans }}
             </div>
         {% endif %}
         </div>

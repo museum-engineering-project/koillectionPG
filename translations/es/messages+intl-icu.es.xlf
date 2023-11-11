@@ -3625,5 +3625,23 @@
         <target>Selección de campos</target>
       </segment>
     </unit>
+    <unit id="mNdiEFL" name="title.selection_of_items">
+      <segment state="translated">
+        <source>Selection of items</source>
+        <target>Selección de artículos.</target>
+      </segment>
+    </unit>
+    <unit id="tNLKql5" name="message.no_items">
+      <segment state="translated">
+        <source>There are no items to select.</source>
+        <target>No hay elementos para seleccionar.</target>
+      </segment>
+    </unit>
+    <unit id="BjfQNq8" name="message.no_fields">
+      <segment state="translated">
+        <source>There are no fields to select.</source>
+        <target>No hay campos para seleccionar.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
