@@ -30,6 +30,7 @@
 
         <h3 class="header col s12">{{ 'title.selection_of_fields'|trans }}</h3>
         <div class="row">
+        {% if form.fields is not empty %}
             <div class="col s12 l5 offset-l1 xl4 offset-xl2">
                 <strong>{{ form_row(form.selectAllFields, {'label' : 'label.labels_select_deselect_all', 'attr': {'class': 'selectAllFields'}}) }}</strong>
                 <hr>
@@ -43,6 +44,12 @@
                     {{ form_row(field, {'attr': {'class': 'fieldCheck'}}) }}
                 </div>
             {% endfor %}
+        {% else %}
+            {% do form.selectAllFields.setRendered() %}
+            <div class="col s12 offset-l1 xl4 offset-xl2">
+                There are no fields to select.
+            </div>
+        {% endif %}
         </div>
 
         <div class="center-align form-btn-holder">

@@ -247,7 +247,8 @@ class CollectionController extends AbstractController
         if ($type == "items")
         {
             $form = $this->createForm(LabelType::class, $label, [
-                'objects' => $collection->getItems()
+                'objects' => $collection->getItems(),
+                'multiple_items' => true
             ]);
         }
         else
@@ -259,7 +260,7 @@ class CollectionController extends AbstractController
         }
 
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) 
+        if ($form->isSubmitted() && $form->isValid() && $label->getObject() != null) 
         {
             $generatedLabel = $labelsGenerator->generateLabel($label);
 

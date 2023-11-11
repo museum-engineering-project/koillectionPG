@@ -93,7 +93,7 @@ class LabelsGenerator
         }
         else
         {
-            $type = $object[0] instanceof Item ? 'item' : 'collection';
+            $type = current($object) instanceof Item ? 'item' : 'collection';
             $filename = "{$type}_label_{$labelSize}.pdf";
         }
 

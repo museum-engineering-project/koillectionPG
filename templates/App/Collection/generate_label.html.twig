@@ -28,9 +28,10 @@
             </div>
         </div>
 
-        {% if form.selectAllItems is defined and form.object is defined %}
+        {% if form.selectAllItems is defined %}
         <h3 class="header col s12">Selection of items</h3>
         <div class="row">
+        {% if form.object is defined and form.object is not empty %}
             <div class="col s12 l5 offset-l1 xl4 offset-xl2">
                 <strong>{{ form_row(form.selectAllItems, {'label' : 'label.labels_select_deselect_all', 'attr': {'class': 'selectAllItems'}}) }}</strong>
                 <hr>
@@ -44,11 +45,18 @@
                     {{ form_row(item, {'attr': {'class': 'itemCheck'}}) }}
                 </div>
             {% endfor %}
+        {% elseif form.object is defined and form.object is empty %}
+        {% do form.selectAllItems.setRendered() %}
+            <div class="col s12 offset-l1 xl4 offset-xl2">
+                There are no items to select.
+            </div>
+        {% endif %}
         </div>
         {% endif %}
 
         <h3 class="header col s12">{{ 'title.selection_of_fields'|trans }}</h3>
         <div class="row">
+        {% if form.fields is not empty %}
             <div class="col s12 l5 offset-l1 xl4 offset-xl2">
                 <strong>{{ form_row(form.selectAllFields, {'label' : 'label.labels_select_deselect_all', 'attr': {'class': 'selectAllFields'}}) }}</strong>
                 <hr>
@@ -62,10 +70,22 @@
                     {{ form_row(field, {'attr': {'class': 'fieldCheck'}}) }}
                 </div>
             {% endfor %}
+        {% else %}
+            {% do form.selectAllFields.setRendered() %}
+            <div class="col s12 offset-l1 xl4 offset-xl2">
+                There are no fields to select.
+            </div>
+        {% endif %}
         </div>
 
         <div class="center-align form-btn-holder">
-            <button type="submit" class="btn waves-effect waves-light">{{ 'btn.download'|trans }}</button>
+            <button id="submitButton" type="submit" class="btn waves-effect waves-light"
+            {% if form.object is defined and form.object is empty %}
+            disabled
+            {% endif %}
+            >
+            {{ 'btn.download'|trans }}
+            </button>
             <a href="{{ path('app_collection_show', { id : collection.id }) }}"
                class="waves-effect waves-light btn btn-cancel">{{ 'btn.cancel'|trans }}</a>
         </div>
@@ -79,12 +99,28 @@
         window.addEventListener("DOMContentLoaded", () => {
             const selectAllItems = document.querySelector(".selectAllItems");
             const selectAllFields = document.querySelector(".selectAllFields");
+            const items = Array.from(document.querySelectorAll(".itemCheck"));
+            const submitButton = document.querySelector("#submitButton");
+
+            function setSubmitButton() {
+                items.some(i => i.checked) ? 
+                    submitButton.removeAttribute("disabled") : 
+                    submitButton.setAttribute("disabled", "");
+            }
+
+            if (items != null) {
+                items.forEach(item => {
+                    item.addEventListener("click", () => {
+                        setSubmitButton();
+                    });
+                });
+            }
 
             if (selectAllItems != null) {
                 selectAllItems.addEventListener("click", () => {
-                    const items = document.querySelectorAll(".itemCheck");
                     const state = selectAllItems.checked ? true : false;
                     items.forEach(item => item.checked = state);
+                    setSubmitButton();
                 });
             }
 

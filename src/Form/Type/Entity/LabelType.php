@@ -66,7 +66,7 @@ class LabelType extends AbstractType
             }
         }
         
-        if (count($options["objects"]) > 1)
+        if ($options['multiple_items'])
         {
             $builder->add('selectAllItems', CheckboxType::class, [
                 'mapped' => false,
@@ -104,7 +104,8 @@ class LabelType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Label::class,
-            'objects' => []
+            'objects' => [],
+            'multiple_items' => false
         ]);
     }
 }
