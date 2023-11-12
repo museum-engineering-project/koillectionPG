@@ -3643,5 +3643,11 @@
         <target>Es sind keine Felder zur Auswahl vorhanden.</target>
       </segment>
     </unit>
+    <unit id="DS4oAZE" name="title.generate_label_items_in_collection">
+      <segment state="translated">
+        <source>Generate labels for selected items in collection {collection}</source>
+        <target>Generieren Sie Etiketten für ausgewählte Elemente in der Sammlung {collection}</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

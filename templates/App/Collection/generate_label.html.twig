@@ -12,7 +12,11 @@
 
 {% block content %}
     <div class="title-block">
+    {% if type == "items" %}
         <h1>{{ 'title.generate_label_collection'|trans({'collection': collection.title}) }}</h1>
+    {% else %}
+        <h1>{{ 'title.generate_label_items_in_collection'|trans({'collection': collection.title}) }}</h1>
+    {% endif %}
     </div>
 
     <div class="content-block">
@@ -35,18 +39,41 @@
         <div class="row">
         {% if form.object is defined and form.object is not empty %}
             <div class="col s12 l5 offset-l1 xl4 offset-xl2">
-                <strong>{{ form_row(form.selectAllItems, {'label' : 'label.labels_select_deselect_all', 'attr': {'class': 'selectAllItems'}}) }}</strong>
-                <hr>
+                <table class="highlight items-table" data-controller="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                {{ form_row(form.selectAllItems, {'attr': {'class': 'selectAllItems'}}) }}
+                            </th>
+                            <th>
+                                Name
+                                <span>
+                                    <i class="fa fa-long-arrow-up" data-column="name" data-direction="asc" data-action="click->table#sort" data-table-target="sorter"></i>
+                                    <i class="fa fa-long-arrow-down" data-column="name" data-direction="desc" data-action="click->table#sort" data-table-target="sorter"></i>
+                                </span>
+                            </th>      
+                        </tr>
+                    </thead
+                    <tbody>
+                    {% for item in form.object.children %}
+                        <tr class="list-element resize-element">
+                            <td>
+                                <p class="checkbox">
+                                    <label>{{ form_widget(item, {'attr': {'class': 'itemCheck'}}) }}
+                                        <span></span>
+                                    </label>
+                                </p>
+                            </td>
+                            <td data-column="name">
+                                <span data-value='{{ form_label(item)|striptags }}'>
+                                    {{ form_label(item)|striptags }}
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            {% for item in form.object.children|sort %}
-                {% if loop.index is divisible by(2) %}
-                    <div class="col s12 l5 xl4">
-                {% else %}
-                    <div class="col s12 l5 offset-l1 xl4 offset-xl2">
-                {% endif %}
-                    {{ form_row(item, {'attr': {'class': 'itemCheck'}}) }}
-                </div>
-            {% endfor %}
         {% elseif form.object is defined and form.object is empty %}
         {% do form.selectAllItems.setRendered() %}
             <div class="col s12 offset-l1 xl4 offset-xl2">
@@ -60,18 +87,41 @@
         <div class="row">
         {% if form.fields is not empty %}
             <div class="col s12 l5 offset-l1 xl4 offset-xl2">
-                <strong>{{ form_row(form.selectAllFields, {'label' : 'label.labels_select_deselect_all', 'attr': {'class': 'selectAllFields'}}) }}</strong>
-                <hr>
+                <table class="highlight items-table" data-controller="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                {{ form_row(form.selectAllFields, {'attr': {'class': 'selectAllFields'}}) }}
+                            </th>
+                            <th>
+                                Name
+                                <span>
+                                    <i class="fa fa-long-arrow-up" data-column="name" data-direction="asc" data-action="click->table#sort" data-table-target="sorter"></i>
+                                    <i class="fa fa-long-arrow-down" data-column="name" data-direction="desc" data-action="click->table#sort" data-table-target="sorter"></i>
+                                </span>
+                            </th>      
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for field in form.fields.children %}
+                        <tr class="list-element resize-element">
+                            <td>
+                                <p class="checkbox">
+                                    <label>{{ form_widget(field, {'attr': {'class': 'fieldCheck'}}) }}
+                                        <span></span>
+                                    </label>
+                                </p>
+                            </td>
+                            <td data-column="name">
+                                <span data-value='{{ form_label(field)|striptags }}'>
+                                    {{ form_label(field)|striptags }}
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            {% for field in form.fields.children|sort %}
-                {% if loop.index is divisible by(2) %}
-                    <div class="col s12 l5 xl4">
-                {% else %}
-                    <div class="col s12 l5 offset-l1 xl4 offset-xl2">
-                {% endif %}
-                    {{ form_row(field, {'attr': {'class': 'fieldCheck'}}) }}
-                </div>
-            {% endfor %}
         {% else %}
             {% do form.selectAllFields.setRendered() %}
             <div class="col s12 offset-l1 xl4 offset-xl2">

@@ -3642,5 +3642,11 @@
         <target>Brak pól do wyboru.</target>
       </segment>
     </unit>
+    <unit id="DS4oAZE" name="title.generate_label_items_in_collection">
+      <segment state="translated">
+        <source>Generate labels for selected items in collection {collection}</source>
+        <target>Generuj etykiety dla wybranych przedmiotów w kolekcji {collection}</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

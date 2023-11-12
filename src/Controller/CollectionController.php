@@ -284,6 +284,7 @@ class CollectionController extends AbstractController
         return $this->render('App/Collection/generate_label.html.twig', [
             'collection' => $collection,
             'form' => $form,
+            'type' => $type
         ]);
     }
 }
