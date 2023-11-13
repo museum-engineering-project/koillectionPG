@@ -13,9 +13,9 @@
 {% block content %}
     <div class="title-block">
     {% if type == "items" %}
-        <h1>{{ 'title.generate_label_collection'|trans({'collection': collection.title}) }}</h1>
-    {% else %}
         <h1>{{ 'title.generate_label_items_in_collection'|trans({'collection': collection.title}) }}</h1>
+    {% else %}
+        <h1>{{ 'title.generate_label_collection'|trans({'collection': collection.title}) }}</h1>
     {% endif %}
     </div>
 
