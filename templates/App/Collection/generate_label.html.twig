@@ -24,10 +24,13 @@
         <h3 class="header col s12">{{ 'title.label_settings'|trans }}</h3>
         <div class="row">
             <div class="col s12 l5 offset-l1 xl4 offset-xl2">
+            {% if form.labelType is defined %}
+                {{ form_row(form.labelType, {'label' : 'label.labels_labelType', 'attr': {'data-controller': 'select--default', 'class': 'labelType'}} ) }}
+            {% endif %}
                 {{ form_row(form.labelSize, {'label' : 'label.labels_label_size', 'attr': {'data-controller': 'select--default'}} ) }}
                 {{ form_row(form.orientation, {'label' : 'label.labels_orientation', 'attr': {'data-controller': 'select--default'}} ) }}
                 {{ form_row(form.fontSize, {'label' : 'label.labels_font_size'} ) }}
-                {{ form_row(form.qrSize, {'label' : 'label.labels_qr_size'} ) }}
+                {{ form_row(form.qrSize, {'label' : 'label.labels_qr_size', 'attr': {'class': 'qrSize'}} ) }}
                 {{ form_row(form.textAlignment, {'label' : 'label.labels_text_alignment', 'attr': {'data-controller': 'select--default'}} ) }}
             </div>
         </div>
@@ -154,6 +157,8 @@
             const items = Array.from(document.querySelectorAll(".itemCheck"));
             const fields = Array.from(document.querySelectorAll(".fieldCheck"));
             const submitButton = document.querySelector("#submitButton");
+            const labelType = document.querySelector(".labelType");
+            const qrSize = document.querySelector(".qrSize");
 
             function setSubmitButton() {
                 items.some(i => i.checked) ? 
@@ -210,6 +215,17 @@
                     fields.forEach(field => field.checked = state);
                 });
             }
+
+            labelType.addEventListener("change", () => {
+                if (labelType.value == "table")
+                {
+                    qrSize.setAttribute("disabled", "");
+                }
+                else
+                {
+                    qrSize.removeAttribute("disabled");
+                }
+            });
         });
     </script>
 {% endblock %}

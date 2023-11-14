@@ -40,46 +40,63 @@ class LabelsGenerator
     {
         $labelSize = $label->getLabelSize();
         $orientation = $label->getOrientation();
+        $cssOrientation = $orientation == OrientationEnum::ORIENTATION_VERTICAL ? "portrait" : "landscape";
         $fontSize = $label->getFontSize();
         $fields = $label->getFields();
         $qrSize = $label->getQrSize();
         $textAlignment = $label->getTextAlignment();
         $object = $label->getObject();
+        $labelType = $label->getLabelType();
         $htmlContent = "";
 
         if (!is_array($object))
         {
             $object = [$object];
         }
-        
-        foreach ($object as $objectElement)
-        {
-            $objectData = [];
-            foreach ($fields as $field)
-            {
-                $datum = $objectElement->getDatumByLabelCaseInsensitive($field);
-                if ($datum != null)
-                {
-                    $objectData[$field] = $datum;
-                }
-            }
 
-            $objectName = $objectElement instanceof Item ? $objectElement->getName() : $objectElement->getTitle();
-            $cssOrientation = $orientation == OrientationEnum::ORIENTATION_VERTICAL ? "portrait" : "landscape";
-    
-            $qrCodeImg = $this->generateQrCode($objectElement);
-    
-            $htmlContent .= $this->twig->render('App/Label/label.html.twig', [
-                'qrCode' => $qrCodeImg,
+        if ($labelType == "table")
+        {
+            $htmlContent = $this->twig->render('App/Label/table_label.html.twig', [
+                'fields' => $fields,
+                'items' => $object,
                 'labelSize' => $labelSize,
                 'fontSize' => $fontSize,
-                'qrSize' => $qrSize,
                 'textAlignment' => $textAlignment,
                 'orientation' => $orientation,
-                'css_orientation' => $cssOrientation,
-                'objectName' => $objectName,
-                'objectData' => $objectData
+                'css_orientation' => $cssOrientation
             ]);
+        }
+        
+        else
+        {
+            foreach ($object as $objectElement)
+            {
+                $objectData = [];
+                foreach ($fields as $field)
+                {
+                    $datum = $objectElement->getDatumByLabelCaseInsensitive($field);
+                    if ($datum != null)
+                    {
+                        $objectData[$field] = $datum;
+                    }
+                }
+
+                $objectName = $objectElement instanceof Item ? $objectElement->getName() : $objectElement->getTitle();
+        
+                $qrCodeImg = $this->generateQrCode($objectElement);
+        
+                $htmlContent .= $this->twig->render('App/Label/label.html.twig', [
+                    'qrCode' => $qrCodeImg,
+                    'labelSize' => $labelSize,
+                    'fontSize' => $fontSize,
+                    'qrSize' => $qrSize,
+                    'textAlignment' => $textAlignment,
+                    'orientation' => $orientation,
+                    'css_orientation' => $cssOrientation,
+                    'objectName' => $objectName,
+                    'objectData' => $objectData
+                ]);
+            }
         }
 
         $dompdf = new Dompdf();

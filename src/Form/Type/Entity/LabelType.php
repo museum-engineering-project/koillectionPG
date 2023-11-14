@@ -10,6 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use App\Enum\LabelSizeEnum;
 use App\Enum\OrientationEnum;
 use App\Enum\TextAlignmentEnum;
+use App\Enum\LabelTypeEnum;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -81,6 +82,11 @@ class LabelType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
                 'data' => array_values($objectsMap)
+            ]);
+
+            $builder->add('labelType', ChoiceType::class, [
+                'choices' => array_flip(LabelTypeEnum::getLabelTypes()),
+                'required' => true,
             ]);
         }
 

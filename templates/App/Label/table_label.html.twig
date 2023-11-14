@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html size="{{ labelSize }}">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <style>
+            @page {
+                size: {{ labelSize }} {{ css_orientation }};
+                margin: 0;
+            }
+
+            body { 
+                font-family: DejaVu Sans;
+            }
+              
+            .label {
+                margin: 0 0;
+                background-color: white;
+                position: absolute;
+                left: 0px; 
+                right: 0px; 
+                overflow: hidden;
+            }
+            
+            .label[size="A4"][orientation="vertical"] {
+                width: 210mm;
+                height: 297mm;
+            }
+
+            .label[size="A4"][orientation="horizontal"] {
+                width: 297mm;
+                height: 210mm;
+            }
+
+            .label[size="A5"][orientation="vertical"] {
+                width: 148mm;
+                height: 210mm;
+            }
+
+            .label[size="A5"][orientation="horizontal"] {
+                width: 210mm;
+                height: 148mm;
+            }
+
+            .label[size="A6"][orientation="vertical"] {
+                width: 105mm;
+                height: 148mm;
+            }
+
+            .label[size="A6"][orientation="horizontal"] {
+                width: 148mm;
+                height: 105mm;
+            }
+
+            .label[size="A7"][orientation="vertical"] {
+                width: 74mm;
+                height: 105mm;
+            }
+
+            .label[size="A7"][orientation="horizontal"] {
+                width: 105mm;
+                height: 74mm;
+            }
+
+            .tableContainer {
+                margin: 5px;
+                overflow: hidden;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                text-align: {{ textAlignment }};
+            }
+
+            td, th {
+                border: 1px solid black;
+                padding: 5px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="label" size="{{ labelSize }}" orientation="{{ orientation }}">
+            <div class="tableContainer">
+                <table>
+                <tr>
+                <th>L.p.</th>
+                <th>Nazwa</th>
+                {% for field in fields %}
+                    <th>{{ field }}</th>
+                {% endfor %}
+                </tr>
+
+                {% for item in items %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ item.getName() }}</td>
+                    {% for field in fields %}
+                    {% set datum = item.getDatumByLabelCaseInsensitive(field)%}
+                    <td>{{ datum ? datum.getValue() : "" }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+                </table>
+            </div>
+        </div>
+    </body>
+</html>
