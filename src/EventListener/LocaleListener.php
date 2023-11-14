@@ -29,9 +29,9 @@ final readonly class LocaleListener
     {
         $request = $event->getRequest();
 
-        if (!$request->hasPreviousSession()) {
-            return;
-        }
+        // if (!$request->hasPreviousSession()) {
+        //     return;
+        // }
 
         $locale = $request->query->get('_locale');
 
