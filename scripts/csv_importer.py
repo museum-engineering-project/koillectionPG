@@ -1,157 +1,276 @@
 #!/usr/bin/env python3
 
+import argparse
 import ast
 import csv
 import datetime
 import json
+import subprocess
+import sys
 import uuid
+import yaml
 
 try:
     import mysql.connector
+    from mysql.connector.connection import MySQLCursor
 except ImportError:
     print("Module mysql.connector is required.")
     print("You can install it with: pip install mysql-connector-python")
-    exit()
-
-USER = 'root'
-PASSWORD = 'password'
-HOST = '172.18.0.3'
-PORT = '3306'
-
-current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    sys.exit(1)
 
 
-def get_current_time():
-    # return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    return current_time  # let's assume everything happens at the same time
+DEFAULT_COLLECTION_VISIBILITY = "private"  # can be changed to "public" or "internal"
 
 
-def generate_id():
+def get_current_time() -> str:
+    """Returns the current time in YYYY-MM-DD-hh:mm:ss format"""
+    return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+
+def get_database_host(container_name: str) -> str:
+    """
+    Tries to automatically find the database host ip by container name.
+    :param container_name: name of the container to find ip address of
+    :return: ip address of the container
+    """
+    host = subprocess.run(
+        "sudo docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' " + container_name,
+        shell=True, check=True, capture_output=True, encoding="utf-8"
+    ).stdout
+
+    if not host:
+        print("Could not automatically determine the database host IP address.")
+        print("Please provide host with the --host argument.")
+        sys.exit(1)
+
+    return host
+
+
+def generate_id() -> str:
+    """
+    Generates and returns a unique id
+    """
     return str(uuid.uuid4())
 
 
-def load_data(path):
-    items = []
+def load_data(path: str, skip_empty_columns: bool, skip_empty_fields: bool) -> tuple[list[dict], list[str]]:
+    """
+    Loads data from the provided CSV file. Returns dictionary containing all loaded data,
+    and a list of the file's headers
+    :param path: Path to the CSV file
+    :param skip_empty_columns: Whether or not empty columns should be omitted from the final result
+    :param skip_empty_fields: Whether or not empty fields should be omitted from the final result (works per row)
+    :return:
+    """
     with open(path, 'r', encoding="utf-8") as file:
         reader = csv.DictReader(file)
-        for row in reader:
-            items.append(row)
-    return items
+        items = list(reader)
+
+    headers = items[0].keys()
+
+    if skip_empty_columns:
+        non_empty_keys = set()
+        for item in items:
+            for key in item.keys():
+                if key.strip() != '' and item[key].strip() != '':
+                    non_empty_keys.add(key)
+        empty_keys = set(items[0].keys()) - non_empty_keys
+
+        for item in items:
+            for key in empty_keys:
+                item.pop(key)
+
+        headers = list(non_empty_keys)
+
+    if skip_empty_fields:
+        items = [{key: value for key, value in item.items() if key.strip() != '' and value.strip() != ''} for item in items]
+
+    return items, headers
 
 
-def insert_display_configuration(owner_id):
+def db_get_username(cursor: MySQLCursor) -> str:
+    """
+    Returns the username of the first Koillection user if only one user exists.
+    Otherwise, prints available users and exits.
+    :param cursor: opened cursor to the koillection database
+    :return: name of the Koillection user
+    """
+    cursor.execute("SELECT username FROM koi_user")
+    usernames = [name[0] for name in cursor.fetchall()]
+    if len(usernames) > 1:
+        print("Argument --user is required when there are multiple Koillection users present. Available users:")
+        for name in usernames:
+            print(name)
+        sys.exit(1)
+
+    return usernames[0]
+
+
+def db_get_collection_id(cursor: MySQLCursor, collection_name: str, owner_id: str) -> str:
+    """
+    Finds a collection with the provided name. If it doesn't exist, creates a new collection belonging to owner_id.
+    Returns the collection id.
+    :param cursor: opened cursor to the koillection database
+    :param collection_name: name of the collection to find or create
+    :param owner_id: id of the collection owner (applicable if creating a new collection)
+    :return: collection id
+    """
+    cursor.execute("SELECT title FROM koi_collection")
+    collection_names = [name[0] for name in cursor.fetchall()]
+    if collection_name not in collection_names:  # create a new collection
+        collection_id = insert_collection(cursor, owner_id, collection_name)
+        insert_log(cursor, owner_id, collection_id, collection_name, "App\\Entity\\Collection")
+    else:
+        cursor.execute(f"SELECT id FROM koi_collection WHERE title='{collection_name}'")
+        collection_id = cursor.fetchone()[0]
+
+    return collection_id
+
+
+def insert_display_configuration(cursor: MySQLCursor, owner_id: str) -> str:
+    """
+    Inserts a single display configuration entry into the koi_display_configuration table and returns its id
+    :param cursor: opened cursor to the koillection database
+    :param owner_id:
+    :return: id of the created display configuration
+    """
     display_configuration_data = {
         "id": generate_id(),
         "owner_id": owner_id,
-        "label": None,
-        "display_mode": "list",
-        "sorting_property": None,
-        "sorting_type": None,
+        "display_mode": "list",  # or grid
         "sorting_direction": "ASC",
-        "show_visibility": 1,
-        "show_actions": 1,
-        "show_number_of_children": 1,
-        "show_number_of_items": 1,
         "created_at": get_current_time(),
-        "updated_at": None,
         "columns": "a:0:{}"  # I have no idea what this does
     }
     insert_statement = (
         "INSERT INTO "
-        "koi_display_configuration (id, owner_id, label, display_mode, sorting_property, sorting_type, sorting_direction, show_visibility, show_actions, show_number_of_children, show_number_of_items, created_at, updated_at, columns) "
-        "values (%(id)s, %(owner_id)s, %(label)s, %(display_mode)s, %(sorting_property)s, %(sorting_type)s, %(sorting_direction)s, %(show_visibility)s, %(show_actions)s, %(show_number_of_children)s, %(show_number_of_items)s, %(created_at)s, %(updated_at)s, %(columns)s)")
+        "koi_display_configuration (id, owner_id, display_mode, sorting_direction, created_at, columns) "
+        "values (%(id)s, %(owner_id)s, %(display_mode)s, %(sorting_direction)s, %(created_at)s, %(columns)s)"
+    )
     cursor.execute(insert_statement, display_configuration_data)
 
     return display_configuration_data["id"]
 
 
-def insert_collection(owner_id, collection_name):
-    children_display_configuration_id = insert_display_configuration(owner_id)
-    items_display_configuration_id = insert_display_configuration(owner_id)
+def insert_collection(cursor: MySQLCursor, owner_id: str, collection_name: str) -> str:
+    """
+    Inserts a single collection into the koi_collection table and returns its id
+    :param cursor: opened cursor to the koillection database
+    :param owner_id: id of the collection's owner
+    :param collection_name: name of the collection
+    :return: id of the created collection
+    """
+
+    children_display_configuration_id = insert_display_configuration(cursor, owner_id)
+    items_display_configuration_id = insert_display_configuration(cursor, owner_id)
 
     collection_data = {
         "id": generate_id(),
-        "parent_id": None,
         "owner_id": owner_id,
         "title": collection_name,
         "color": "000000",
-        "image": None,
         "seen_counter": 0,
-        "visibility": "private",  # can be changed to public or internal
+        "visibility": DEFAULT_COLLECTION_VISIBILITY,
         "created_at": get_current_time(),
-        "updated_at": None,
-        "parent_visibility": None,
-        "final_visibility": "private",  # can be changed to public or internal
-        "items_default_template_id": None,
+        "final_visibility": DEFAULT_COLLECTION_VISIBILITY,
+        "items_default_template_id": None,  # todo?
         "children_display_configuration_id": children_display_configuration_id,
         "items_display_configuration_id": items_display_configuration_id,
         "cached_values": """{"prices": [], "counters": {"items": 0, "children": 0}}"""
     }
     insert_statement = (
         "INSERT INTO "
-        "koi_collection (id, parent_id, owner_id, title, color, image, seen_counter, visibility, created_at, updated_at, parent_visibility, final_visibility, items_default_template_id, children_display_configuration_id, items_display_configuration_id, cached_values) "
-        "values         (%(id)s, %(parent_id)s, %(owner_id)s, %(title)s, %(color)s, %(image)s, %(seen_counter)s, %(visibility)s, %(created_at)s, %(updated_at)s, %(parent_visibility)s, %(final_visibility)s, %(items_default_template_id)s, %(children_display_configuration_id)s, %(items_display_configuration_id)s, %(cached_values)s)")
+        "koi_collection (id, owner_id, title, color, seen_counter, visibility, created_at,"
+        "                final_visibility, items_default_template_id, children_display_configuration_id,"
+        "                items_display_configuration_id, cached_values) "
+        "values         (%(id)s, %(owner_id)s, %(title)s, %(color)s, %(seen_counter)s, %(visibility)s, %(created_at)s,"
+        "                %(final_visibility)s, %(items_default_template_id)s, %(children_display_configuration_id)s,"
+        "                %(items_display_configuration_id)s, %(cached_values)s)"
+    )
     cursor.execute(insert_statement, collection_data)
 
     return collection_data["id"]
 
 
-def insert_datum(owner_id, item_id, datum_name, datum_value, datum_position, visibility):
+def insert_datum(cursor: MySQLCursor, owner_id: str, item_id: str, datum_name: str, datum_value: str, datum_position: int, visibility: str) -> str:
+    """
+    Inserts a single datum into the koi_datum table and returns its id
+    :param cursor: opened cursor to the koillection database
+    :param owner_id: id of the datum's owner (user)
+    :param item_id: id of the item this datum refers to
+    :param datum_name: name of the datum
+    :param datum_value: value of the datum
+    :param datum_position: position of the datum in the item (datums are displayed in ascending position order)
+    :param visibility: visibility of the datum (public/private/internal)
+    :return: id of the created datum
+    """
     datum_data = {
         "id": generate_id(),
         "item_id": item_id,
         "owner_id": owner_id,
-        "type": "text",  # todo?
+        "type": "text",
         "label": datum_name,
         "value": datum_value,
         "position": datum_position,
-        "image": None,
-        "image_small_thumbnail": None,
         "created_at": get_current_time(),
-        "updated_at": None,
-        "collection_id": None,
-        "file": None,
-        "original_filename": None,
-        "image_large_thumbnail": None,
-        "choice_list_id": None,
         "visibility": visibility
     }
     insert_statement = (
         "INSERT INTO "
-        "koi_datum (id, item_id, owner_id, type, label, value, position, image, image_small_thumbnail, created_at, updated_at, collection_id, file, original_filename, image_large_thumbnail, choice_list_id, visibility) "
-        "values    (%(id)s, %(item_id)s, %(owner_id)s, %(type)s, %(label)s, %(value)s, %(position)s, %(image)s, %(image_small_thumbnail)s, %(created_at)s, %(updated_at)s, %(collection_id)s, %(file)s, %(original_filename)s, %(image_large_thumbnail)s, %(choice_list_id)s, %(visibility)s)")
+        "koi_datum (id, item_id, owner_id, type, label,"
+        "           value, position, created_at, visibility) "
+        "values    (%(id)s, %(item_id)s, %(owner_id)s, %(type)s, %(label)s,"
+        "           %(value)s, %(position)s, %(created_at)s, %(visibility)s)"
+    )
     cursor.execute(insert_statement, datum_data)
 
     return datum_data["id"]
 
 
-def insert_item(owner_id, collection_id, item_name):
+def insert_item(cursor: MySQLCursor, owner_id: str, collection_id: str, item_name: str) -> str:
+    """
+    Inserts a single item into the koi_item table and returns its id
+    :param cursor: opened cursor to the koillection database
+    :param owner_id: id of the item's owner
+    :param collection_id: id of the item's collection
+    :param item_name: name of the item
+    :return: id of the created item
+    """
     item_data = {
         "id": generate_id(),
         "collection_id": collection_id,
         "owner_id": owner_id,
         "name": item_name,
         "quantity": 1,  # todo?
-        "image": None,
-        "image_small_thumbnail": None,
         "seen_counter": 0,
         "visibility": "public",
         "created_at": get_current_time(),
-        "updated_at": None,
-        "image_large_thumbnail": None,
-        "parent_visibility": "public",
-        "final_visibility": "public"
+        "parent_visibility": DEFAULT_COLLECTION_VISIBILITY,
+        "final_visibility": DEFAULT_COLLECTION_VISIBILITY
     }
     insert_statement = (
         "INSERT INTO "
-        "koi_item (id, collection_id, owner_id, name, quantity, image, image_small_thumbnail, seen_counter, visibility, created_at, updated_at, image_large_thumbnail, parent_visibility, final_visibility) "
-        "values   (%(id)s, %(collection_id)s, %(owner_id)s, %(name)s, %(quantity)s, %(image)s, %(image_small_thumbnail)s, %(seen_counter)s, %(visibility)s, %(created_at)s, %(updated_at)s, %(image_large_thumbnail)s, %(parent_visibility)s, %(final_visibility)s)")
+        "koi_item (id, collection_id, owner_id, name, quantity, seen_counter, visibility,"
+        "          created_at, parent_visibility, final_visibility) "
+        "values   (%(id)s, %(collection_id)s, %(owner_id)s, %(name)s, %(quantity)s, %(seen_counter)s, %(visibility)s,"
+        "          %(created_at)s, %(parent_visibility)s, %(final_visibility)s)"
+    )
     cursor.execute(insert_statement, item_data)
 
     return item_data["id"]
 
 
-def insert_log(owner_id, object_id, object_name, object_class):
+def insert_log(cursor: MySQLCursor, owner_id: str, object_id: str, object_name: str, object_class: str) -> str:
+    """
+    Inserts a single log entry into the koi_log table and returns its id
+    :param cursor: opened cursor to the koillection database
+    :param owner_id: id of the log entry owner (user)
+    :param object_id: id of the object the log entry refers to
+    :param object_name: name of the object the log entry refers to
+    :param object_class: class of the object the log entry refers to
+    :return: id of the created log entry
+    """
+
     log_data = {
         "id": generate_id(),
         "owner_id": owner_id,
@@ -159,110 +278,116 @@ def insert_log(owner_id, object_id, object_name, object_class):
         "logged_at": get_current_time(),
         "object_id": object_id,
         "object_label": object_name,
-        "object_class": object_class,
-        "object_deleted": 0
+        "object_class": object_class
     }
     insert_statement = (
         "INSERT INTO "
-        "koi_log (id, owner_id, type, logged_at, object_id, object_label, object_class, object_deleted) "
-        "values  (%(id)s, %(owner_id)s, %(type)s, %(logged_at)s, %(object_id)s, %(object_label)s, %(object_class)s, %(object_deleted)s)")
+        "koi_log (id, owner_id, type, logged_at, object_id, object_label, object_class) "
+        "values  (%(id)s, %(owner_id)s, %(type)s, %(logged_at)s, %(object_id)s, %(object_label)s, %(object_class)s)"
+    )
     cursor.execute(insert_statement, log_data)
 
     return log_data["id"]
 
 
-def main():
-    file_path = input("CSV file path: ")
-    items = load_data(file_path)
+def parse_args() -> dict:
+    """
+    Parses the command line arguments
+    :return: dictionary containing the arguments
+    """
+    parser = argparse.ArgumentParser(description="Import data from a csv file to Koillection database")
+    parser.add_argument("-f", "--csv_file", type=str, required=True, help="Path to the csv file")
+    parser.add_argument("-F", "--compose_file", type=str, help="Path to the docker compose file")
 
-    headers = [item for item in items[0].keys() if item.strip() != '']
-    name_field = headers[0]
-    print(f"\nHeaders: {list(headers)}")
-    print(f"Default item name will use the value in column: {name_field}.")
-    if input("Use a different item name? (y/n) ") == 'y':
-        name_field = None
-        while name_field not in headers:
-            name_field = input("Item name: ")
+    parser.add_argument("-n", "--name_column", type=str, required=True,
+                        help="CSV column containing item names")
+    parser.add_argument("-p", "--private_fields", type=str, nargs='*', default=[],
+                        help="Column names that will be made private")
+    parser.add_argument("-s", "--skip_fields", type=str, nargs='*', default=[],
+                        help="Column names that will be skipped")
+    parser.add_argument("-c", "--collection", type=str, required=True,
+                        help="Name of the collection to import data into."
+                             "A new collection will be created if it does not exist.")
+    parser.add_argument("-u", "--user", type=str,
+                        help="Koillection user that will become the owner of the newly created collection"
+                             "(not required when there is only one user)")
 
-    print("By default all fields will be public.")
-    print("Enter names of fields that should be made private, separated by commas (only commas, not comma+space!).")
-    private_fields = input(">>").split(',')
+    parser.add_argument("--skip_empty_columns", action="store_true",
+                        help="Removes all columns that don't have a value in any item")
+    parser.add_argument("--skip_empty_fields", action="store_true",
+                        help="Removes fields that don't have a value (works per-item)")
 
-    # print("\nCollections with matching headers:")
-    # todo fetch list of all templates, compare headers with fields of each template, print template if they match
+    parser.add_argument("--host", type=str, help="Database host ip")
 
-    choice = None
-    while choice not in ('1', '2'):
-        print()
-        print("1. Create a new collection")
-        print("2. Add to existing collection")
-        choice = input(">>")
+    return vars(parser.parse_args())
 
-    create_new_collection = False
-    if choice == '1':
-        create_new_collection = True
 
-    if not create_new_collection:
-        cursor.execute("SELECT title FROM koi_collection")
-        collection_names = [name[0] for name in cursor.fetchall()]
-        print("\nCollections:")
-        for name in collection_names:
-            print(name)
+def load_environment_variables(compose_file: str) -> dict:
+    """
+    Loads environmental variables from the koillection service, from the provided compose file
+    :param compose_file: path to the compose file
+    :return: dictionary containing the environmental variables and their values
+    """
 
-    collection_name = input("Collection name: ")
+    with open(compose_file, 'r') as file:
+        compose = yaml.safe_load(file)
 
-    cursor.execute("SELECT username FROM koi_user")
-    usernames = [name[0] for name in cursor.fetchall()]
-    if len(usernames) == 1:
-        username = usernames[0]
-    else:
-        print("\nUsers:")
-        for name in usernames:
-            print(name)
+    environment = {}
+    for item in compose["services"]["koillection"]["environment"]:
+        key, value = item.split('=')
+        environment[key] = value
 
-        username = None
-        while username not in usernames:
-            username = input("Collection owner name: ")
+    return environment
+
+
+def main() -> None:
+    """The main importer function. Loads all the required data and imports items into the database"""
+
+    args = parse_args()
+    environment = load_environment_variables(args["compose_file"])
+
+    cnx = mysql.connector.connect(
+        user=environment["DB_USER"],
+        password=environment["DB_PASSWORD"],
+        host=args["host"] if args["host"] is not None else get_database_host(environment["DB_HOST"]),
+        port=environment["DB_PORT"],
+        database="koillection"
+    )
+    cursor = cnx.cursor()
+
+    items, headers = load_data(args["csv_file"], args["skip_empty_columns"], args["skip_empty_fields"])
+
+    username = args["user"] if args["user"] is not None else db_get_username(cursor)
 
     cursor.execute(f"SELECT id FROM koi_user WHERE username='{username}'")
     owner_id = cursor.fetchone()[0]
 
-    if create_new_collection:
-        collection_id = insert_collection(owner_id, collection_name)
-        insert_log(owner_id, collection_id, collection_name, "App\\Entity\\Collection")
-    else:
-        while collection_name not in collection_names:
-            collection_name = input("Collection name: ")
-            print(collection_names, type(collection_names))
+    collection_id = db_get_collection_id(cursor, args["collection"], owner_id)
 
-        cursor.execute(f"SELECT id FROM koi_collection WHERE title='{collection_name}'")
-        collection_id = cursor.fetchone()[0]
-
+    # insert all items
     for item in items:
-        item_id = insert_item(owner_id, collection_id, item[name_field])
+        item_id = insert_item(cursor, owner_id, collection_id, item[args["name_column"]])
 
-        for index, attribute_name in enumerate(headers):
-            if attribute_name != name_field:
-                insert_datum(owner_id, item_id, attribute_name, item[attribute_name], index + 1,
-                             "private" if attribute_name in private_fields else "public")
+        for index, field_name in enumerate(headers):
+            if field_name != args["name_column"] and field_name not in args["skip_fields"] and item.get(field_name):
+                insert_datum(cursor, owner_id, item_id, field_name, item[field_name], index + 1,
+                             "private" if field_name in args["private_fields"] else "public")
 
-        insert_log(owner_id, item_id, item[name_field], "App\\Entity\\Item")
+        insert_log(cursor, owner_id, item_id, item[args["name_column"]], "App\\Entity\\Item")
+        # todo maybe insert a log entry for creating the collection as well? And display configuration?
 
+    # update the collection's cached values to reflect the current items number
     cursor.execute(f"SELECT cached_values FROM koi_collection WHERE id='{collection_id}'")
     cached_values = ast.literal_eval(cursor.fetchone()[0])
     cached_values["counters"]["items"] += len(items)
     cursor.execute(f"UPDATE koi_collection SET cached_values=%s, updated_at=%s WHERE id='{collection_id}'",
                    (json.dumps(cached_values), get_current_time()))
 
-
-if __name__ == "__main__":
-    cnx = mysql.connector.connect(user=USER, password=PASSWORD,
-                                  host=HOST, port=PORT,
-                                  database='koillection')
-    cursor = cnx.cursor()
-
-    main()
-
     cnx.commit()
     cursor.close()
     cnx.close()
+
+
+if __name__ == "__main__":
+    main()
+    sys.exit(0)
