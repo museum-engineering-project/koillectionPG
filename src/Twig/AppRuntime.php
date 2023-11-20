@@ -42,6 +42,34 @@ readonly class AppRuntime implements RuntimeExtensionInterface
         return round(pow(1024, $base - floor($base)), $precision).' '.$suffixes[floor($base)].$this->translator->trans('global.byte_abbreviation');
     }
 
+    public function transMlang(?string $text, ?string $locale): string
+    {
+        if ($text === null) {
+            return "";
+        }
+        
+        $locale = preg_quote($locale);
+
+        $pattern = "/{mlang " . $locale . "}.*?{mlang}/";
+        $matches = [];
+        preg_match_all($pattern, $text, $matches);
+
+        // remove mlang tags of matched locale while keeping their content
+        foreach ($matches[0] as &$match) {
+            $originalMatch = $match;
+            
+            $match = str_replace("{mlang " . $locale . "}", "", $match);
+            $match = str_replace("{mlang}", "", $match);
+            
+            $text = str_replace($originalMatch, $match, $text);
+        }
+
+        // remove all remaining (unmatched) mlang tags and their content
+        $text = preg_replace("/{mlang .*?}.*?{mlang}/", '', $text);
+
+        return $text;
+    }
+
     public function renderTitle(array $breadcrumb): string
     {
         $element = array_shift($breadcrumb);
@@ -59,12 +87,12 @@ readonly class AppRuntime implements RuntimeExtensionInterface
                 if ($entityElement instanceof BreadcrumbElement && null !== $entityElement->getEntity()) {
                     $class = (new \ReflectionClass($entityElement->getEntity()))->getShortName();
 
-                    return $this->translator->trans('global.entities.'.strtolower($class)).' · '.$entityElement->getLabel().' · '.$this->translator->trans($element->getLabel());
+                    return $this->translator->trans('global.entities.'.strtolower($class)).' · '.$this->transMlang($entityElement->getLabel(), $this->translator->getLocale()).' · '.$this->translator->trans($element->getLabel());
                 } elseif (str_contains($element->getLabel(), 'breadcrumb.')) {
                     return $this->translator->trans($element->getLabel());
                 }
 
-                return $this->translator->trans('label.search').' · '.$element->getLabel();
+                return $this->translator->trans('label.search').' · '.$this->transMlang($element->getLabel(), $this->translator->getLocale());
             }
 
             if ('entity' === $element->getType()) {
@@ -73,7 +101,7 @@ readonly class AppRuntime implements RuntimeExtensionInterface
                 $class = implode('_', $pieces);
                 $class = strtolower($class);
 
-                return $this->translator->trans('global.entities.'.strtolower($class)).' · '.$element->getLabel();
+                return $this->translator->trans('global.entities.'.strtolower($class)).' · '.$this->transMlang($element->getLabel(), $this->translator->getLocale());
             }
 
             if ('root' === $element->getType()) {
