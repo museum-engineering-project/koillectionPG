@@ -25,6 +25,7 @@ except ImportError:
 
 
 DEFAULT_COLLECTION_VISIBILITY = "private"  # can be changed to "public" or "internal"
+DEFAULT_NAME_COLUMN = "Nazwa"
 
 
 def get_current_time() -> str:
@@ -313,8 +314,8 @@ def parse_args() -> dict:
                         help="Name of the Excel sheet to import data from. Only applicable when importing Excel files."
                              "Will use the first sheet if omitted.")
 
-    parser.add_argument("-n", "--name_column", type=str, required=True,
-                        help="Column containing item names")
+    parser.add_argument("-n", "--name_column", type=str, default=DEFAULT_NAME_COLUMN,
+                        help=f"Column containing item names. Default={DEFAULT_NAME_COLUMN}")
     parser.add_argument("-p", "--private_fields", type=str, nargs='+', default=[],
                         help="Column names that will be made private")
     parser.add_argument("-s", "--skip_fields", type=str, nargs='+', default=[],
