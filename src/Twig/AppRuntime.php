@@ -69,7 +69,7 @@ readonly class AppRuntime implements RuntimeExtensionInterface
         }
 
         // remove all remaining (unmatched) mlang tags and their content
-        $text = preg_replace("/{mlang .*?}.*?{mlang}/", '', $text);
+        $text = preg_replace("/{mlang .*?}.*?{mlang}/", "", $text);
 
         return $text;
     }

@@ -1,17 +1,29 @@
 import { Controller } from '@hotwired/stimulus';
 import Translator from "bazinga-translator";
 import { TsSelect2 } from "../../node_modules/ts-select2/dist/core";
-import { htmlStringToDomElement } from "../../js/utils";
 
+/* stimulusFetch: 'lazy' */
 export default class extends Controller {
     select2;
 
     connect() {
-        this.loadSelect()
-    }
+        let self = this;
 
-    loadSelect() {
         this.select2 = new TsSelect2(this.element, {
+            templateSelection: function (element) {
+                if (!element.text) {
+                    return self.htmlToElement('<span class="select-placeholder">' + Translator.trans('select2.none') + '</span>');
+                }
+
+                return self.htmlToElement('<div><span>' + self.transMlang(element.text) + '</span></div>');
+            },
+            templateResult: function (element) {
+                if (!element.text && !element.children) {
+                    return self.htmlToElement('<div><span class="select-placeholder">' + Translator.trans('select2.none') + '</span></div>');
+                }
+
+                return self.htmlToElement('<div><span>'+ self.transMlang(element.text) + '</span></div>');
+            },
             language: {
                 noResults: function () {
                     return Translator.trans('select2.no_results');
@@ -46,30 +58,42 @@ export default class extends Controller {
                 }
 
                 return null;
-            },
-
-            templateSelection: this.templateSelection,
-            templateResult: this.templateResult
+            }
         })
     }
 
-    templateSelection(element) {
-        if (!element.text) {
-            return htmlStringToDomElement('<span class="select-placeholder">' + Translator.trans('select2.none') + '</span>');
-        }
-
-        return htmlStringToDomElement('<div><span>' + element.text + '</span></div>');
-    }
-
-    templateResult(element) {
-        if (!element.text && !element.children) {
-            return htmlStringToDomElement('<div><span class="select-placeholder">' + Translator.trans('select2.none') + '</span></div>');
-        }
-
-        return htmlStringToDomElement('<div><span>' + element.text + '</span></div>');
+    htmlToElement(html) {
+        let template = document.createElement('template');
+        html = html.trim();
+        template.innerHTML = html;
+        return template.content.firstChild;
     }
 
     update({ detail: { value } }) {
         this.select2.val(value);
+    }
+
+    transMlang(text) {
+        if (text === null) {
+            return "";
+        }
+
+        let pattern = new RegExp("{mlang " + Translator.locale + "}.*?{mlang}", 'g');
+        let matches = [...text.matchAll(pattern)];
+
+        // remove mlang tags of matched locale while keeping their content
+        for (let match of matches) {
+            let originalMatch = match[0];
+    
+            match[0] = match[0].replace("{mlang " + Translator.locale + "}", "");
+            match[0] = match[0].replace("{mlang}", "");
+    
+            text = text.replace(originalMatch, match[0]);
+        }
+
+        // remove all remaining (unmatched) mlang tags and their content
+        text = text.replace(new RegExp("{mlang .*?}.*?{mlang}", 'g'), "");
+
+        return text;
     }
 }
