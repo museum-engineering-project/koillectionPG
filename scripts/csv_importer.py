@@ -319,7 +319,12 @@ def parse_args() -> dict:
 
     parser.add_argument("--host", type=str, help="Database host ip")
 
-    return vars(parser.parse_args())
+    args = vars(parser.parse_args())
+
+    args["private_fields"] = [field_name.lower() for field_name in args["private_fields"]]
+    args["skip_fields"] = [field_name.lower() for field_name in args["skip_fields"]]
+
+    return args
 
 
 def load_environment_variables(compose_file: str) -> dict:
@@ -369,9 +374,9 @@ def main() -> None:
         item_id = insert_item(cursor, owner_id, collection_id, item[args["name_column"]])
 
         for index, field_name in enumerate(headers):
-            if field_name != args["name_column"] and field_name not in args["skip_fields"] and item.get(field_name):
+            if field_name != args["name_column"] and field_name.lower() not in args["skip_fields"] and item.get(field_name):
                 insert_datum(cursor, owner_id, item_id, field_name, item[field_name], index + 1,
-                             "private" if field_name in args["private_fields"] else "public")
+                             "private" if field_name.lower() in args["private_fields"] else "public")
 
         insert_log(cursor, owner_id, item_id, item[args["name_column"]], "App\\Entity\\Item")
         # todo maybe insert a log entry for creating the collection as well? And display configuration?
