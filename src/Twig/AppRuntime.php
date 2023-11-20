@@ -42,10 +42,14 @@ readonly class AppRuntime implements RuntimeExtensionInterface
         return round(pow(1024, $base - floor($base)), $precision).' '.$suffixes[floor($base)].$this->translator->trans('global.byte_abbreviation');
     }
 
-    public function transMlang(?string $text, ?string $locale): string
+    public function transMlang(?string $text, ?string $locale=null): string
     {
         if ($text === null) {
             return "";
+        }
+
+        if ($locale === null) {
+            $locale = $this->translator->getLocale();
         }
         
         $locale = preg_quote($locale);
@@ -87,12 +91,12 @@ readonly class AppRuntime implements RuntimeExtensionInterface
                 if ($entityElement instanceof BreadcrumbElement && null !== $entityElement->getEntity()) {
                     $class = (new \ReflectionClass($entityElement->getEntity()))->getShortName();
 
-                    return $this->translator->trans('global.entities.'.strtolower($class)).' · '.$this->transMlang($entityElement->getLabel(), $this->translator->getLocale()).' · '.$this->translator->trans($element->getLabel());
+                    return $this->translator->trans('global.entities.'.strtolower($class)).' · '.$this->transMlang($entityElement->getLabel()).' · '.$this->translator->trans($element->getLabel());
                 } elseif (str_contains($element->getLabel(), 'breadcrumb.')) {
                     return $this->translator->trans($element->getLabel());
                 }
 
-                return $this->translator->trans('label.search').' · '.$this->transMlang($element->getLabel(), $this->translator->getLocale());
+                return $this->translator->trans('label.search').' · '.$this->transMlang($element->getLabel());
             }
 
             if ('entity' === $element->getType()) {
@@ -101,7 +105,7 @@ readonly class AppRuntime implements RuntimeExtensionInterface
                 $class = implode('_', $pieces);
                 $class = strtolower($class);
 
-                return $this->translator->trans('global.entities.'.strtolower($class)).' · '.$this->transMlang($element->getLabel(), $this->translator->getLocale());
+                return $this->translator->trans('global.entities.'.strtolower($class)).' · '.$this->transMlang($element->getLabel());
             }
 
             if ('root' === $element->getType()) {

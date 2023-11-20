@@ -93,7 +93,7 @@
                            value="{{ form.vars.value }}" {{ block('widget_attributes') }} {{ form.vars.data == true ? 'checked="checked"' }}
                            data-action="change->columns-list#check"
                     />
-                    <span>{{ form.vars.value|transMlang(app.user.locale) }}</span>
+                    <span>{{ form.vars.value|transMlang }}</span>
                 </label>
             </p>
             {{- form_errors(form) -}}

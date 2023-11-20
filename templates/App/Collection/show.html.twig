@@ -30,12 +30,12 @@
                     {% if collection.image != null %}
                         <img class="thumbnail avatar" src="{{ preload(asset(collection.image), {as: 'image'}) }}">
                     {% else %}
-                        <span class="thumbnail color-avatar circle avatar color-{{ collection.color }}">{{ collection.title|transMlang(app.user.locale)|first|upper }}</span>
+                        <span class="thumbnail color-avatar circle avatar color-{{ collection.color }}">{{ collection.title|transMlang|first|upper }}</span>
                     {% endif %}
                 </div>
                 <div class="right">
                     <h1>
-                        {{ collection.title|transMlang(app.user.locale) }}
+                        {{ collection.title|transMlang }}
                     </h1>
 
                     <ul class="nav nav-pills">
@@ -106,7 +106,7 @@
                             {% set underlinedTags = getUnderlinedTags(collection.data) %}
                             {% for datum in collection.data %}
                                 <div class="datum-row col s12 l5 xl4">
-                                    <span class="label">{{ datum.label|transMlang(app.user.locale) }} :</span>
+                                    <span class="label">{{ datum.label|transMlang }} :</span>
                                     {{ include('App/Datum/_display_value/_' ~ datum.type ~ '.html.twig', {'datum': datum}) }}
                                 </div>
                             {% endfor %}
@@ -114,7 +114,7 @@
                         {% if collection.cachedValues.prices|default(null) is not empty %}
                             {% for label, value in collection.cachedValues.prices %}
                                 <div class="datum-row col s12 l5 xl4">
-                                    <span class="label">{{ label|transMlang(app.user.locale) }} :</span>
+                                    <span class="label">{{ label|transMlang }} :</span>
                                     {{ value|format_currency(getContextUser().currency) }}
                                 </div>
                             {% endfor %}
@@ -126,7 +126,7 @@
             <!-- Child collections -->
             {% if children is not empty %}
                 <div class="block-element">
-                    <h2 class="header">{{ collection.childrenDisplayConfiguration.label|transMlang(app.user.locale)|default('title.children'|trans) }}</h2>
+                    <h2 class="header">{{ collection.childrenDisplayConfiguration.label|transMlang|default('title.children'|trans) }}</h2>
                     {{ include('App/Collection/_collections_' ~ collection.childrenDisplayConfiguration.displayMode ~ '.html.twig', {
                         'collections': children,
                         'displayConfiguration': collection.childrenDisplayConfiguration
@@ -137,7 +137,7 @@
             <!-- Collection's items -->
             {% if items is not empty %}
                 <div class="block-element">
-                    <h2 class="header">{{ collection.itemsDisplayConfiguration.label|transMlang(app.user.locale)|default('title.items'|trans) }}</h2>
+                    <h2 class="header">{{ collection.itemsDisplayConfiguration.label|transMlang|default('title.items'|trans) }}</h2>
                     {{ include('App/Collection/_items_' ~ collection.itemsDisplayConfiguration.displayMode ~ '.html.twig', {
                         'items': items,
                         'displayConfiguration': collection.itemsDisplayConfiguration

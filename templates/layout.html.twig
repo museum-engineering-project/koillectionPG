@@ -113,9 +113,9 @@
 {% block javascripts %}
     {{ parent() }}
     {% for flash_message in app.session.flashbag.get('notice') %}
-        <span data-controller="toast" data-message="{{ flash_message|transMlang(app.user.locale)|e }}"></span>
+        <span data-controller="toast" data-message="{{ flash_message|transMlang|e }}"></span>
     {% endfor %}
     {% for flash_message in app.session.flashbag.get('error') %}
-        <span data-controller="toast" data-message="{{ flash_message|transMlang(app.user.locale)|e }}" data-classes="error"></span>
+        <span data-controller="toast" data-message="{{ flash_message|transMlang|e }}" data-classes="error"></span>
     {% endfor %}
 {% endblock %}

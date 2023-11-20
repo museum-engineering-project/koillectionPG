@@ -1,9 +1,9 @@
 <span data-value="{{ datum.value }}"></span>
 
 {% if underlinedTags is defined %}
-    {% for value in datum.value|transMlang(app.user.locale)|split(',') %}
+    {% for value in datum.value|transMlang|split(',') %}
         {{ underlinedTags[value|trim] is defined ? underlinedTags[value|trim]|raw : value }}{{ not loop.last ? ',' }}
     {% endfor %}
 {% else %}
-    {{ datum.value|transMlang(app.user.locale) }}
+    {{ datum.value|transMlang }}
 {% endif %}

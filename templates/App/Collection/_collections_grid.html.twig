@@ -6,10 +6,10 @@
                 {% if collection.image != null %}
                     <img src="{{ asset(collection.image) }}" loading="lazy">
                 {% else %}
-                    <span class="color-avatar circle avatar color-{{ collection.color }}">{{ collection.title|transMlang(app.user.locale)|first|upper }}</span>
+                    <span class="color-avatar circle avatar color-{{ collection.color }}">{{ collection.title|transMlang|first|upper }}</span>
                 {% endif %}
             </a>
-            <span class="collection-title">{{ collection.title|transMlang(app.user.locale) }}</span>
+            <span class="collection-title">{{ collection.title|transMlang }}</span>
             <p class="collection-stats">
                 {{ 'counter.item'|trans({'count': collection.cachedValues.counters.items|default(0)}) }}
             </p>
