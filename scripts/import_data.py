@@ -2,20 +2,25 @@
 
 import argparse
 import ast
-import csv
 import datetime
 import json
 import subprocess
 import sys
 import uuid
-import yaml
 
 try:
     import mysql.connector
     from mysql.connector.connection import MySQLCursor
+    import pandas as pd
+    import yaml
+    import xlrd  # used by pandas
 except ImportError:
-    print("Module mysql.connector is required.")
-    print("You can install it with: pip install mysql-connector-python")
+    print("The following modules are required:")
+    print("mysql-connector-python")
+    print("pandas")
+    print("PyYAML")
+    print("xlrd")
+    print("You can install them with: pip install {module name}")
     sys.exit(1)
 
 
@@ -53,37 +58,42 @@ def generate_id() -> str:
     return str(uuid.uuid4())
 
 
-def load_data(path: str, skip_empty_columns: bool, skip_empty_fields: bool) -> tuple[list[dict], list[str]]:
+def load_data(path: str, sheet_name: str, skip_empty_columns: bool, skip_empty_fields: bool) -> tuple[list[dict], list[str]]:
     """
-    Loads data from the provided CSV file. Returns dictionary containing all loaded data,
+    Loads data from the provided Excel file. Returns dictionary containing all loaded data,
     and a list of the file's headers
-    :param path: Path to the CSV file
-    :param skip_empty_columns: Whether or not empty columns should be omitted from the final result
-    :param skip_empty_fields: Whether or not empty fields should be omitted from the final result (works per row)
+    :param path: path to the Excel file
+    :param sheet_name: name of the Excel sheet to load data from
+    :param skip_empty_columns: whether or not empty columns should be omitted from the final result
+    :param skip_empty_fields: whether or not empty fields should be omitted from the final result (works per row)
     :return:
     """
-    with open(path, 'r', encoding="utf-8") as file:
-        reader = csv.DictReader(file)
-        items = list(reader)
+    if sheet_name is None:
+        sheet_name = 0  # load first sheet if sheet_name is not provided
 
-    headers = items[0].keys()
+    try:
+        df = pd.read_excel(path, sheet_name=sheet_name, dtype=str)
+    except ValueError:
+        df = pd.read_csv(path, dtype=str)
+
+    df = df.loc[:, ~df.columns.str.contains('^Unnamed')]  # drop unnamed columns
+    headers = list(df)
 
     if skip_empty_columns:
-        non_empty_keys = set()
-        for item in items:
-            for key in item.keys():
-                if key.strip() != '' and item[key].strip() != '':
-                    non_empty_keys.add(key)
-        empty_keys = set(items[0].keys()) - non_empty_keys
+        for header in headers[:]:
+            if df[header].isnull().all():
+                headers.remove(header)
 
-        for item in items:
-            for key in empty_keys:
-                item.pop(key)
+    items = [{} for i in range(df.shape[0])]
 
-        headers = list(non_empty_keys)
+    for header in headers:
+        for row in range(df.shape[0]):
+            value = df[header][row]
+            if type(value) is float:  # because pandas imports empty cells as float("nan") (even with dtype=str)
+                value = ''
 
-    if skip_empty_fields:
-        items = [{key: value for key, value in item.items() if key.strip() != '' and value.strip() != ''} for item in items]
+            if not skip_empty_fields or value.strip() != '':
+                items[row][header] = value
 
     return items, headers
 
@@ -295,12 +305,16 @@ def parse_args() -> dict:
     Parses the command line arguments
     :return: dictionary containing the arguments
     """
-    parser = argparse.ArgumentParser(description="Import data from a csv file to Koillection database")
-    parser.add_argument("-f", "--csv_file", type=str, required=True, help="Path to the csv file")
+    parser = argparse.ArgumentParser(description="Import data from a file (Excel or csv) into Koillection database")
+    parser.add_argument("-f", "--file", type=str, required=True, help="Path to the file containing data")
     parser.add_argument("-F", "--compose_file", type=str, help="Path to the docker compose file")
 
+    parser.add_argument("-S", "--sheet", type=str,
+                        help="Name of the Excel sheet to import data from. Only applicable when importing Excel files."
+                             "Will use the first sheet if omitted.")
+
     parser.add_argument("-n", "--name_column", type=str, required=True,
-                        help="CSV column containing item names")
+                        help="Column containing item names")
     parser.add_argument("-p", "--private_fields", type=str, nargs='+', default=[],
                         help="Column names that will be made private")
     parser.add_argument("-s", "--skip_fields", type=str, nargs='+', default=[],
@@ -360,7 +374,7 @@ def main() -> None:
     )
     cursor = cnx.cursor()
 
-    items, headers = load_data(args["csv_file"], args["skip_empty_columns"], args["skip_empty_fields"])
+    items, headers = load_data(args["file"], args["sheet"], args["skip_empty_columns"], args["skip_empty_fields"])
 
     username = args["user"] if args["user"] is not None else db_get_username(cursor)
 
@@ -374,7 +388,7 @@ def main() -> None:
         item_id = insert_item(cursor, owner_id, collection_id, item[args["name_column"]])
 
         for index, field_name in enumerate(headers):
-            if field_name != args["name_column"] and field_name.lower() not in args["skip_fields"] and item.get(field_name):
+            if field_name != args["name_column"] and field_name.lower() not in args["skip_fields"] and item.get(field_name) is not None:
                 insert_datum(cursor, owner_id, item_id, field_name, item[field_name], index + 1,
                              "private" if field_name.lower() in args["private_fields"] else "public")
 
