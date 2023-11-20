@@ -3,6 +3,7 @@
 import argparse
 import ast
 import datetime
+import ipaddress
 import json
 import subprocess
 import sys
@@ -39,12 +40,14 @@ def get_database_host(container_name: str) -> str:
     :param container_name: name of the container to find ip address of
     :return: ip address of the container
     """
-    host = subprocess.run(
-        "sudo docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' " + container_name,
-        shell=True, check=True, capture_output=True, encoding="utf-8"
-    ).stdout
+    try:
+        host = subprocess.run(
+            "sudo docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' " + container_name,
+            shell=True, check=True, capture_output=True, encoding="utf-8"
+        ).stdout
 
-    if not host:
+        ipaddress.ip_address(host)
+    except (ValueError, subprocess.CalledProcessError):
         print("Could not automatically determine the database host IP address.")
         print("Please provide host with the --host argument.")
         sys.exit(1)
@@ -108,7 +111,11 @@ def db_get_username(cursor: MySQLCursor) -> str:
     """
     cursor.execute("SELECT username FROM koi_user")
     usernames = [name[0] for name in cursor.fetchall()]
-    if len(usernames) > 1:
+
+    if not usernames:
+        print("There should be at least one user.")
+        sys.exit(1)
+    elif len(usernames) > 1:
         print("Argument --user is required when there are multiple Koillection users present. Available users:")
         for name in usernames:
             print(name)
@@ -308,10 +315,10 @@ def parse_args() -> dict:
     """
     parser = argparse.ArgumentParser(description="Import data from a file (Excel or csv) into Koillection database")
     parser.add_argument("-f", "--file", type=str, required=True, help="Path to the file containing data")
-    parser.add_argument("-F", "--compose_file", type=str, help="Path to the docker compose file")
+    parser.add_argument("-F", "--compose_file", type=str, required=True, help="Path to the docker compose file")
 
     parser.add_argument("-S", "--sheet", type=str,
-                        help="Name of the Excel sheet to import data from. Only applicable when importing Excel files."
+                        help="Name of the Excel sheet to import data from. Only applicable when importing Excel files. "
                              "Will use the first sheet if omitted.")
 
     parser.add_argument("-n", "--name_column", type=str, default=DEFAULT_NAME_COLUMN,
@@ -321,10 +328,10 @@ def parse_args() -> dict:
     parser.add_argument("-s", "--skip_fields", type=str, nargs='+', default=[],
                         help="Column names that will be skipped")
     parser.add_argument("-c", "--collection", type=str, required=True,
-                        help="Name of the collection to import data into."
+                        help="Name of the collection to import data into. "
                              "A new collection will be created if it does not exist.")
     parser.add_argument("-u", "--user", type=str,
-                        help="Koillection user that will become the owner of the newly created collection"
+                        help="Koillection user that will become the owner of the newly created collection "
                              "(not required when there is only one user)")
 
     parser.add_argument("--skip_empty_columns", action="store_true",
@@ -377,7 +384,7 @@ def main() -> None:
 
     items, headers = load_data(args["file"], args["sheet"], args["skip_empty_columns"], args["skip_empty_fields"])
 
-    username = args["user"] if args["user"] is not None else db_get_username(cursor)
+    username = args["user"] if args["user"] else db_get_username(cursor)
 
     cursor.execute(f"SELECT id FROM koi_user WHERE username='{username}'")
     owner_id = cursor.fetchone()[0]
