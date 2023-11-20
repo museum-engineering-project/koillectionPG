@@ -301,9 +301,9 @@ def parse_args() -> dict:
 
     parser.add_argument("-n", "--name_column", type=str, required=True,
                         help="CSV column containing item names")
-    parser.add_argument("-p", "--private_fields", type=str, nargs='*', default=[],
+    parser.add_argument("-p", "--private_fields", type=str, nargs='+', default=[],
                         help="Column names that will be made private")
-    parser.add_argument("-s", "--skip_fields", type=str, nargs='*', default=[],
+    parser.add_argument("-s", "--skip_fields", type=str, nargs='+', default=[],
                         help="Column names that will be skipped")
     parser.add_argument("-c", "--collection", type=str, required=True,
                         help="Name of the collection to import data into."
