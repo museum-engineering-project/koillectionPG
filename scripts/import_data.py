@@ -27,6 +27,7 @@ except ImportError:
 
 DEFAULT_COLLECTION_VISIBILITY = "private"  # can be changed to "public" or "internal"
 DEFAULT_NAME_COLUMN = "Nazwa"
+DEFAULT_ITEM_NAME = "ITEM NAME NOT FOUND"
 
 
 def get_current_time() -> str:
@@ -46,8 +47,10 @@ def get_database_host(container_name: str) -> str:
             shell=True, check=True, capture_output=True, encoding="utf-8"
         ).stdout
 
-        ipaddress.ip_address(host)
-    except (ValueError, subprocess.CalledProcessError):
+        ipaddress.ip_address(host.strip())
+    except (ValueError, subprocess.CalledProcessError) as e:
+        print(e)
+        print()
         print("Could not automatically determine the database host IP address.")
         print("Please provide host with the --host argument.")
         sys.exit(1)
@@ -398,14 +401,16 @@ def main() -> None:
 
     # insert all items
     for item in items:
-        item_id = insert_item(cursor, owner_id, collection_id, item[args["name_column"]])
+        item_name = item.get(args["name_column"])
+        item_name = DEFAULT_ITEM_NAME if item_name is None else item_name
+        item_id = insert_item(cursor, owner_id, collection_id, item_name)
 
         for index, field_name in enumerate(headers):
             if field_name != args["name_column"] and field_name.lower() not in args["skip_fields"] and item.get(field_name) is not None:
                 insert_datum(cursor, owner_id, item_id, field_name, item[field_name], index + 1,
                              "private" if field_name.lower() in args["private_fields"] else "public")
 
-        insert_log(cursor, owner_id, item_id, item[args["name_column"]], "App\\Entity\\Item")
+        insert_log(cursor, owner_id, item_id, item_name, "App\\Entity\\Item")
         # todo maybe insert a log entry for creating the collection as well? And display configuration?
 
     # update the collection's cached values to reflect the current items number
