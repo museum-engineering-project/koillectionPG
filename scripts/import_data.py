@@ -83,6 +83,11 @@ def load_data(path: str, sheet_name: str, skip_empty_columns: bool, skip_empty_f
     df = df.loc[:, ~df.columns.str.contains('^Unnamed')]  # drop unnamed columns
     headers = list(df)
 
+    # drop all rows following the first empty row
+    empty_rows = df.isnull().all(axis=1)
+    rows_to_drop = [i for i in range(list(empty_rows).index(True), len(empty_rows))]
+    df = df.drop(index=rows_to_drop)
+
     if skip_empty_columns:
         for header in headers[:]:
             if df[header].isnull().all():
