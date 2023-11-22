@@ -3648,5 +3648,23 @@
         <target>Generuj etykiety dla wybranych przedmiotów w kolekcji {collection}</target>
       </segment>
     </unit>
+    <unit id="gx6majH" name="label.labels_labelType">
+      <segment state="translated">
+        <source>Label type</source>
+        <target>Rodzaj etykiety</target>
+      </segment>
+    </unit>
+    <unit id="8VE2cuX" name="global.generate_label.labelType.standard">
+      <segment state="translated">
+        <source>Standard</source>
+        <target>Standardowa</target>
+      </segment>
+    </unit>
+    <unit id="9qh9d1U" name="global.generate_label.labelType.table">
+      <segment state="translated">
+        <source>Table</source>
+        <target>Tabela</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

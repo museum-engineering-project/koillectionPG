@@ -104,7 +104,11 @@ class LabelsGenerator
         $dompdf->loadHtml($htmlContent);
         $dompdf->render();
 
-        if (count($object) > 1)
+        if ($labelType == "table")
+        {
+            $filename = "items_table_label_{$labelSize}.pdf";
+        }
+        else if (count($object) > 1)
         {
             $filename = "multiple_items_labels_{$labelSize}.pdf";
         }
