@@ -3509,6 +3509,7 @@
       <segment state="translated">
         <source>Are you sure you want to delete this choice list ? It will be permanently lost...</source>
         <target>Czy na pewno chcesz usunąć tę listę wyboru? Nie można cofnąć tej akcji.</target>
+      </segment>
     </unit>
     <unit id="cnknef3" name="tooltip.generate_label">
       <segment state="translated">
