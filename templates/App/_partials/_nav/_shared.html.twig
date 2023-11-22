@@ -14,10 +14,12 @@
     </form>
 </li>
 
-<li>
-    <div class="locale-dropdown-sidebar" data-controller="dropdown">
-        <span data-action="click->dropdown#show" style="cursor: pointer">
+<li class="locale-dropdown-sidebar" data-controller="dropdown">
+        <span class="locale-dropdown-sidebar-span" data-action="click->dropdown#show">
             <i class="fa fa-language fa-fw"></i>
+            <span class="current-locale" style="margin-left: 20px;">
+            {{ getLocaleLabel(app.request.locale)|trans }}
+            </span>
         </span>
 
         <ul class="dropdown-menu hidden" data-dropdown-target="menu">
@@ -29,7 +31,10 @@
                 </li>
             {% endfor %}
         </ul>
-    </div>
+</li>
+
+<li class="separate-item sidebar-element">
+    <div></div>
 </li>
 
 <li class="{{ 'app_shared_collection' in route or 'app_shared_item' in route ? 'current' }} sidebar-element">
