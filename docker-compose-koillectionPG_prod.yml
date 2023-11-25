@@ -23,8 +23,7 @@ services:
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.koillection.entrypoints=websecure"
-            # Replace YOUR_IP_OR_DOMAIN with your domain or IP
-            - "traefik.http.routers.koillection.rule=Host(`YOUR_IP_OR_DOMAIN`)"
+            - "traefik.http.routers.koillection.rule=Host(`127.0.0.1`)" # || Host(`YOUR_IP_OR_DOMAIN`) "
             - "traefik.http.routers.koillection.tls=true"
         depends_on:
             - mysql
