@@ -17,6 +17,8 @@
         "doctrine/doctrine-migrations-bundle": "3.3.0",
         "doctrine/orm": "2.16.2",
         "doctrine/persistence": "3.2.0",
+        "dompdf/dompdf": "^2.0",
+        "endroid/qr-code-bundle": "^5.0",
         "lexik/jwt-authentication-bundle": "2.19.1",
         "maennchen/zipstream-php": "3.1.0",
         "nelmio/cors-bundle": "2.3.1",
@@ -87,7 +89,8 @@
         "allow-plugins": {
             "symfony/flex": true,
             "symfony/runtime": true,
-            "phpstan/extension-installer": true
+            "phpstan/extension-installer": true,
+            "endroid/installer": true
         }
     },
     "autoload": {

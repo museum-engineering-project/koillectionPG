@@ -18,6 +18,7 @@ use App\Entity\Interfaces\BreadcrumbableInterface;
 use App\Entity\Interfaces\CacheableInterface;
 use App\Entity\Interfaces\LoggableInterface;
 use App\Enum\VisibilityEnum;
+use App\Enum\DatumTypeEnum;
 use App\Repository\CollectionRepository;
 use App\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -175,6 +176,17 @@ class Collection implements LoggableInterface, BreadcrumbableInterface, Cacheabl
     {
         foreach ($this->getData() as $datum) {
             if ($datum->getLabel() === $label) {
+                return $datum;
+            }
+        }
+
+        return null;
+    }
+
+    public function getDatumByLabelCaseInsensitive(string $label): ?Datum
+    {
+        foreach ($this->getData() as $datum) {
+            if (strtolower($datum->getLabel()) === strtolower($label)) {
                 return $datum;
             }
         }
@@ -467,5 +479,24 @@ class Collection implements LoggableInterface, BreadcrumbableInterface, Cacheabl
         $this->scrapedFromUrl = $scrapedFromUrl;
 
         return $this;
+    }
+
+    public function getDataTexts(): DoctrineCollection
+    {
+        $criteria = Criteria::create();
+        $criteria->where(Criteria::expr()->in('type', DatumTypeEnum::TEXT_TYPES))->orderBy(['position' => Criteria::ASC]);
+
+        return $this->data->matching($criteria);
+    }
+
+    public function getPublicDataTexts(): DoctrineCollection
+    {
+        $criteria = Criteria::create();
+        $expressionBuilder = Criteria::expr();
+        $criteria->where($expressionBuilder->in('type', DatumTypeEnum::TEXT_TYPES))
+            ->andWhere($expressionBuilder->eq('visibility', VisibilityEnum::VISIBILITY_PUBLIC))
+            ->orderBy(['position' => Criteria::ASC]);
+
+        return $this->data->matching($criteria);
     }
 }

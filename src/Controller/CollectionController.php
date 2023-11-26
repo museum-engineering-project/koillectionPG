@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Collection;
+use App\Entity\Label;
 use App\Enum\DatumTypeEnum;
 use App\Enum\ReservedLabelEnum;
 use App\Form\Type\Entity\CollectionType;
 use App\Form\Type\Entity\DisplayConfigurationType;
 use App\Form\Type\Model\BatchTaggerType;
 use App\Form\Type\Model\ScrapingType;
+use App\Form\Type\Entity\LabelType;
 use App\Model\BatchTagger;
 use App\Model\Scraping;
 use App\Repository\ChoiceListRepository;
@@ -21,8 +23,11 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use App\Service\LabelsGenerator;
 
 class CollectionController extends AbstractController
 {
@@ -226,6 +231,60 @@ class CollectionController extends AbstractController
         return $this->render('App/Collection/batch_tagging.html.twig', [
             'form' => $form,
             'collection' => $collection,
+        ]);
+    }
+
+    #[Route(path: '/collections/{id}/generate-label/{type}', name: 'app_collection_generate_label', methods: ['GET', 'POST'])]
+    public function generateLabel(
+        Request $request,
+        Collection $collection,
+        LabelsGenerator $labelsGenerator,
+        string $type="collection"
+    ): Response
+    {
+        $label = new Label();
+        
+        if ($type == "items")
+        {
+            $form = $this->createForm(LabelType::class, $label, [
+                'objects' => $collection->getItems(),
+                'multiple_items' => true
+            ]);
+        }
+        else
+        {
+            $label->setObject($collection);
+            $form = $this->createForm(LabelType::class, $label, [
+                'objects' => [$collection]
+            ]);
+        }
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid() && $label->getObject() != null) 
+        {
+            $generatedLabel = $labelsGenerator->generateLabel($label);
+
+            // Display pdf file instead of downloading
+            /*
+            $response = new Response($generatedLabel['content'], 
+                                     Response::HTTP_OK, 
+                                     ['Content-Type' => 'application/pdf']);
+            */
+            
+            $response = new Response($generatedLabel['content']);
+            $disposition = HeaderUtils::makeDisposition(
+                HeaderUtils::DISPOSITION_ATTACHMENT,
+                $generatedLabel['filename']
+            );
+            $response->headers->set('Content-Disposition', $disposition);
+
+            return $response;
+        }
+
+        return $this->render('App/Collection/generate_label.html.twig', [
+            'collection' => $collection,
+            'form' => $form,
+            'type' => $type
         ]);
     }
 }
