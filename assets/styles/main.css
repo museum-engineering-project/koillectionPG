@@ -2286,3 +2286,18 @@ tr {
 .bottom-margin {
     margin-bottom: 30px !important;
 }
+
+.locale-dropdown-sidebar {
+    display: block;
+    font-size: 16px;
+    line-height: 35px;
+    outline: none;
+}
+
+.locale-dropdown-sidebar-span {
+    cursor: pointer; 
+    display: block; 
+    color: white;
+    padding: 7px 15px;
+    padding-left: 22px;
+}
