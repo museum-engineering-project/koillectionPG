@@ -9,16 +9,19 @@ use App\Entity\Item;
 use App\Entity\Loan;
 use App\Entity\Template;
 use App\Enum\VisibilityEnum;
+use App\Entity\Label;
 use App\Form\Type\Entity\ItemType;
 use App\Form\Type\Entity\LoanType;
 use App\Form\Type\Model\ScrapingItemType;
 use App\Model\ScrapingItem;
+use App\Form\Type\Entity\LabelType;
 use App\Repository\ChoiceListRepository;
 use App\Repository\CollectionRepository;
 use App\Repository\ItemRepository;
 use App\Repository\TagRepository;
 use App\Service\DublinCoreXMLGenerator;
 use App\Service\ItemNameGuesser;
+use App\Service\LabelsGenerator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -27,6 +30,7 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -219,5 +223,41 @@ class ItemController extends AbstractController
                         );
 
         return $response; 
+    }
+
+    #[Route(path: '/items/{id}/generate-label', name: 'app_item_generate_label', methods: ['GET', 'POST'])]
+    public function generateLabel(Request $request, Item $item, LabelsGenerator $labelsGenerator): Response
+    {
+        $label = new Label();
+        $label->setObject($item);
+
+        $form = $this->createForm(LabelType::class, $label, [
+            'objects' => [$item]
+        ]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $generatedLabel = $labelsGenerator->generateLabel($label);
+
+            // Display pdf file instead of downloading
+            /*
+            $response = new Response($generatedLabel['content'], 
+                                     Response::HTTP_OK, 
+                                     ['Content-Type' => 'application/pdf']);
+            */
+            
+            $response = new Response($generatedLabel['content']);
+            $disposition = HeaderUtils::makeDisposition(
+                HeaderUtils::DISPOSITION_ATTACHMENT,
+                $generatedLabel['filename']
+            );
+            $response->headers->set('Content-Disposition', $disposition);
+
+            return $response;
+        }
+
+        return $this->render('App/Item/generate_label.html.twig', [
+            'item' => $item,
+            'form' => $form,
+        ]);
     }
 }

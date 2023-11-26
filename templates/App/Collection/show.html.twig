@@ -60,6 +60,14 @@
                            title="{{ 'tooltip.edit'|trans }}">
                             <i class="fa fa-pencil fa-fw"></i>
                         </a>
+                        <a href="{{ path('app_collection_generate_label', {'id': collection.id}) }}" class="button"
+                           title="{{ 'tooltip.generate_label_collection'|trans }}">
+                           <i class="fa fa-file-text fa-fw"></i>
+                        </a>
+                        <a href="{{ path('app_collection_generate_label', {'id': collection.id, 'type': 'items'}) }}" class="button"
+                           title="{{ 'tooltip.generate_label_multiple_items'|trans }}">
+                           <i class="fa fa-list fa-fw"></i>
+                        </a>
                         {{ include('App/_partials/_icon/_delete.html.twig', {
                             path: path('app_collection_delete', {id: collection.id}),
                             message: 'message.delete.collection'

@@ -26,6 +26,7 @@ Encore
     .addStyleEntry('export', './styles/export.css')
     .addStyleEntry('dark', './styles/themes/dark.css')
     .addStyleEntry('light', './styles/themes/light.css')
+    .addStyleEntry('label_style', './styles/label_style.css')
 
     .addPlugin(new CopyPlugin({
         patterns: [

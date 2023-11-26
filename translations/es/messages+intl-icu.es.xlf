@@ -3541,5 +3541,161 @@
         <target>Raspadores de deseos</target>
       </segment>
     </unit>
+    <unit id="cnknef3" name="tooltip.generate_label">
+      <segment state="translated">
+        <source>Generate label</source>
+        <target>Generar etiqueta</target>
+      </segment>
+    </unit>
+    <unit id="1bp25z3" name="label.labels_label_size">
+      <segment state="translated">
+        <source>Label size</source>
+        <target>Tamaño de la etiqueta</target>
+      </segment>
+    </unit>
+    <unit id="ouu4dxj" name="label.labels_orientation">
+      <segment state="translated">
+        <source>Orientation</source>
+        <target>Orientación</target>
+      </segment>
+    </unit>
+    <unit id="at37flj" name="label.labels_font_size">
+      <segment state="translated">
+        <source>Font size</source>
+        <target>Tamaño de fuente</target>
+      </segment>
+    </unit>
+    <unit id="oryhxo2" name="btn.download">
+      <segment state="translated">
+        <source>Download</source>
+        <target>Descargar</target>
+      </segment>
+    </unit>
+    <unit id="zv3pm91" name="title.generate_label_collection">
+      <segment state="translated">
+        <source>Generate label for collection {collection}</source>
+        <target>Generar etiqueta para colección {collection}</target>
+      </segment>
+    </unit>
+    <unit id="dmsdxq5" name="title.generate_label_item">
+      <segment state="translated">
+        <source>Generate label for item {item}</source>
+        <target>Generar etiqueta para el artículo {item}</target>
+      </segment>
+    </unit>
+    <unit id="3nlb4cf" name="global.generate_label.orientation.horizontal">
+      <segment state="translated">
+        <source>Horizontal</source>
+        <target>Horizontal</target>
+      </segment>
+    </unit>
+    <unit id="7r4c4xc" name="global.generate_label.orientation.vertical">
+      <segment state="translated">
+        <source>Vertical</source>
+        <target>Vertical</target>
+      </segment>
+    </unit>
+    <unit id="vg9v4s5" name="tooltip.generate_label_collection">
+      <segment state="translated">
+        <source>Generate label for collection</source>
+        <target>Generar etiqueta para colección</target>
+      </segment>
+    </unit>
+    <unit id="bfzVhF0" name="tooltip.generate_label_multiple_items">
+      <segment state="translated">
+        <source>Generate labels for selected items in this collection</source>
+        <target>Generar etiquetas para artículos seleccionados en esta colección</target>
+      </segment>
+    </unit>
+    <unit id="OA2g7xf" name="breadcrumb.add_generate_label">
+      <segment state="translated">
+        <source>Generate label</source>
+        <target>Generar etiqueta</target>
+      </segment>
+    </unit>
+    <unit id="OdwQXGP" name="label.labels_qr_size">
+      <segment state="translated">
+        <source>QR Code size (in %)</source>
+        <target>Tamaño del código QR (en %)</target>
+      </segment>
+    </unit>
+    <unit id="MpROcte" name="label.labels_text_alignment">
+      <segment state="translated">
+        <source>Text alignment</source>
+        <target>Alineación del texto</target>
+      </segment>
+    </unit>
+    <unit id="TbLTFjf" name="label.labels_select_deselect_all">
+      <segment state="translated">
+        <source>Select/Deselect all</source>
+        <target>Seleccionar/Deseleccionar todo</target>
+      </segment>
+    </unit>
+    <unit id="ttMcgqj" name="global.generate_label.textAlignment_left">
+      <segment state="translated">
+        <source>left</source>
+        <target>izquierdo</target>
+      </segment>
+    </unit>
+    <unit id="EpgL03v" name="global.generate_label.textAlignment_center">
+      <segment state="translated">
+        <source>center</source>
+        <target>centro</target>
+      </segment>
+    </unit>
+    <unit id="jj2pWn9" name="title.label_settings">
+      <segment state="translated">
+        <source>Label settings</source>
+        <target>Configuración de etiquetas</target>
+      </segment>
+    </unit>
+    <unit id="8FqIbAD" name="title.selection_of_fields">
+      <segment state="translated">
+        <source>Selection of fields</source>
+        <target>Selección de campos</target>
+      </segment>
+    </unit>
+    <unit id="mNdiEFL" name="title.selection_of_items">
+      <segment state="translated">
+        <source>Selection of items</source>
+        <target>Selección de artículos.</target>
+      </segment>
+    </unit>
+    <unit id="tNLKql5" name="message.no_items">
+      <segment state="translated">
+        <source>There are no items to select.</source>
+        <target>No hay elementos para seleccionar.</target>
+      </segment>
+    </unit>
+    <unit id="BjfQNq8" name="message.no_fields">
+      <segment state="translated">
+        <source>There are no fields to select.</source>
+        <target>No hay campos para seleccionar.</target>
+      </segment>
+    </unit>
+    <unit id="DS4oAZE" name="title.generate_label_items_in_collection">
+      <segment state="translated">
+        <source>Generate labels for selected items in collection {collection}</source>
+        <target>Generar etiquetas para elementos seleccionados en la colección {collection}</target>
+      </segment>
+    </unit>
+    <unit id="gx6majH" name="label.labels_labelType">
+      <segment state="translated">
+        <source>Label type</source>
+        <target>Tipo de etiqueta</target>
+      </segment>
+    </unit>
+    <unit id="8VE2cuX" name="global.generate_label.labelType.standard">
+      <segment state="translated">
+        <source>Standard</source>
+        <target>Estándar</target>
+      </segment>
+    </unit>
+    <unit id="9qh9d1U" name="global.generate_label.labelType.table">
+      <segment state="translated">
+        <source>Table</source>
+        <target>Mesa</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

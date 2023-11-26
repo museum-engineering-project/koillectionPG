@@ -1,0 +1,119 @@
+{% extends 'layout.html.twig' %}
+
+{% set breadcrumb = buildBreadcrumb([{'route': 'app_collection_index', 'trans': 'menu.collections'}], item, 'breadcrumb.add_generate_label') %}
+
+{% block title %}
+    {{ renderTitle(breadcrumb) }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ renderBreadcrumb(breadcrumb) }}
+{% endblock %}
+
+{% block content %}
+    <div class="title-block">
+        <h1>{{ 'title.generate_label_item'|trans({'item': item.name}) }}</h1>
+    </div>
+
+    <div class="content-block">
+        {{ form_start(form) }}
+        <h3 class="header col s12">{{ 'title.label_settings'|trans }}</h3>
+        <div class="row">
+            <div class="col s12 l5 offset-l1 xl4 offset-xl2">
+                {{ form_row(form.labelSize, {'label' : 'label.labels_label_size', 'attr': {'data-controller': 'select--default'}} ) }}
+                {{ form_row(form.orientation, {'label' : 'label.labels_orientation', 'attr': {'data-controller': 'select--default'}} ) }}
+                {{ form_row(form.fontSize, {'label' : 'label.labels_font_size'} ) }}
+                {{ form_row(form.qrSize, {'label' : 'label.labels_qr_size'} ) }}
+                {{ form_row(form.textAlignment, {'label' : 'label.labels_text_alignment', 'attr': {'data-controller': 'select--default'}} ) }}
+            </div>
+        </div>
+
+        <h3 class="header col s12">{{ 'title.selection_of_fields'|trans }}</h3>
+        <div class="row">
+        {% if form.fields is not empty %}
+            <div class="col s12 l5 offset-l1 xl4 offset-xl2">
+                <table class="highlight items-table" data-controller="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                {{ form_row(form.selectAllFields, {'attr': {'class': 'selectAllFields'}}) }}
+                            </th>
+                            <th>
+                                Name
+                                <span>
+                                    <i class="fa fa-long-arrow-up" data-column="name" data-direction="asc" data-action="click->table#sort" data-table-target="sorter"></i>
+                                    <i class="fa fa-long-arrow-down" data-column="name" data-direction="desc" data-action="click->table#sort" data-table-target="sorter"></i>
+                                </span>
+                            </th>      
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for field in form.fields.children %}
+                        <tr class="list-element resize-element">
+                            <td>
+                                <p class="checkbox">
+                                    <label>{{ form_widget(field, {'attr': {'class': 'fieldCheck'}}) }}
+                                        <span></span>
+                                    </label>
+                                </p>
+                            </td>
+                            <td data-column="name">
+                                <span data-value='{{ form_label(field)|striptags }}'>
+                                    {{ form_label(field)|striptags }}
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            {% do form.selectAllFields.setRendered() %}
+            <div class="col s12 offset-l1 xl4 offset-xl2">
+                {{ 'message.no_fields'|trans }}
+            </div>
+        {% endif %}
+        </div>
+
+        <div class="center-align form-btn-holder">
+            <button type="submit" class="btn waves-effect waves-light">{{ 'btn.download'|trans }}</button>
+            <a href="{{ path('app_item_show', { id : item.id }) }}"
+               class="waves-effect waves-light btn btn-cancel">{{ 'btn.cancel'|trans }}</a>
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+            const selectAllFields = document.querySelector(".selectAllFields");
+            const fields = Array.from(document.querySelectorAll(".fieldCheck"));
+
+            function updateSelectAllFieldsButton() {
+                if (fields.some(i => !i.checked)) {
+                    selectAllFields.checked = false;
+                }
+                else if (fields.every(i => i.checked)) {
+                    selectAllFields.checked = true;
+                }
+            }
+
+            if (fields != null) {
+                fields.forEach(field => {
+                    field.addEventListener("click", () => {
+                        updateSelectAllFieldsButton();
+                    });
+                });
+            }
+
+            if (selectAllFields != null) {
+                selectAllFields.addEventListener("click", () => {
+                    const state = selectAllFields.checked ? true : false;
+                    fields.forEach(field => field.checked = state);
+                });
+            }
+        });
+    </script>
+{% endblock %}
