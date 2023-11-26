@@ -28,11 +28,6 @@ final readonly class LocaleListener
     public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
-
-        if (!$request->hasPreviousSession()) {
-            return;
-        }
-
         $locale = $request->query->get('_locale');
 
         if ($locale && \in_array($locale, $this->enabledLocales)) {

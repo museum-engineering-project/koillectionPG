@@ -14,6 +14,29 @@
     </form>
 </li>
 
+<li class="locale-dropdown-sidebar" data-controller="dropdown">
+        <span class="locale-dropdown-sidebar-span" data-action="click->dropdown#show">
+            <i class="fa fa-language fa-fw"></i>
+            <span class="current-locale" style="margin-left: 20px;">
+            {{ getLocaleLabel(app.request.locale)|trans }}
+            </span>
+        </span>
+
+        <ul class="dropdown-menu hidden" data-dropdown-target="menu">
+            {% for key, locale in getLocales() %}
+                <li>
+                    <a href="{{ path(app.request.get('_route'), app.request.get('_route_params')) }}?_locale={{ key }}">
+                        <span class="flag">{{ getCountryFlag(key) }}</span><span>{{ locale|trans }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+</li>
+
+<li class="separate-item sidebar-element">
+    <div></div>
+</li>
+
 <li class="{{ 'app_shared_collection' in route or 'app_shared_item' in route ? 'current' }} sidebar-element">
     <a
             href="{{ path('app_shared_collection_index') }}">

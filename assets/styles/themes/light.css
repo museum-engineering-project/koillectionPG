@@ -54,7 +54,7 @@ a, .breadcrumb-item.active a, .dropdown-menu i, .navigation-block i, .autocomple
 }
 
 /** PRIMARY COLOR DARK **/
-.sidebar-element a:hover, .sidebar-element.current a {
+.sidebar-element a:hover, .sidebar-element.current a, .locale-dropdown-sidebar:hover {
     background-color: var(--primary-color-dark);
 }
 
@@ -98,7 +98,7 @@ footer, .image-label, .datum-row span.country-name, .breadcrumb-item a {
 }
 
 /** FONT COLOR LIGHTEST **/
-i, .sidebar-element span, .header-logo a, .toast, .box h1 {
+i, .sidebar-element span, .header-logo a, .toast, .box h1, .locale-dropdown-sidebar-span {
     color: var(--font-color-lightest);
 }
 
