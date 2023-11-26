@@ -183,6 +183,17 @@ class Item implements BreadcrumbableInterface, LoggableInterface, CacheableInter
         return null;
     }
 
+    public function getDatumByLabelCaseInsensitive(string $label): ?Datum
+    {
+        foreach ($this->getData() as $datum) {
+            if (strtolower($datum->getLabel()) === strtolower($label)) {
+                return $datum;
+            }
+        }
+
+        return null;
+    }
+
     public function getDataImages(): ArrayCollection
     {
         $criteria = Criteria::create();
