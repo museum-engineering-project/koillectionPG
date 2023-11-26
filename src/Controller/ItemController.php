@@ -212,6 +212,7 @@ class ItemController extends AbstractController
     }
 
     #[Route(path: '/items/{id}/generate-dublincore-xml', name: 'app_item_generate_dublin_core_xml', methods: ['GET', 'POST'])]
+    #[Route(path: '/user/{username}/items/{id}/generate-dublincore-xml', name: 'app_shared_item_generate_dublin_core_xml', methods: ['GET', 'POST'])]
     public function generateDublinCoreXML(Request $request, Item $item, DublinCoreXMLGenerator $dcGenerator): Response
     {
         $generatedXML = $dcGenerator->generateDublinCoreXML($item, $request->getSchemeAndHttpHost());
