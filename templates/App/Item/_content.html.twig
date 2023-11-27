@@ -47,7 +47,7 @@
             </div>
         {% elseif context == 'shared' %}
             <div class="btn-holder">
-                    <a href="{{ path('app_item_generate_dublin_core_xml', {'id': item.id}) }}" class="button"
+                    <a href="{{ path('app_shared_item_generate_dublin_core_xml', {'id': item.id}) }}" class="button"
                         title="{{ 'tooltip.generate_dublin_core_xml'|trans }}">
                         <i class="fa fa fa-file-code-o fa-fw"></i>
                     </a>
