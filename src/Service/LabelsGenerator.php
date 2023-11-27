@@ -13,22 +13,24 @@ use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Dompdf\Dompdf;
+use Symfony\Component\Security\Core\Security;
 
 class LabelsGenerator
 {
     public function __construct(
         private Environment $twig,
-        private UrlGeneratorInterface $urlGenerator
+        private UrlGeneratorInterface $urlGenerator,
+        private Security $security
     ) 
     {}
 
     public function generateQrCode(Item|Collection $object)
     {
-        $route = $object instanceof Item ? "app_item_show" : "app_collection_show";
+        $route = $object instanceof Item ? "app_shared_item_show" : "app_shared_collection_show";
 
         $qrCode = new QrCode($this->urlGenerator->generate(
             $route,
-            array('id' => $object->getId()),
+            array('id' => $object->getId(), 'username' => $this->security->getUser()),
             UrlGeneratorInterface::ABSOLUTE_URL));
         $writer = new PngWriter();
         $qrCodeImg = $writer->write($qrCode)->getDataUri();
