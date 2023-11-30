@@ -52,8 +52,8 @@ readonly class AppRuntime implements RuntimeExtensionInterface
             $locale = $this->translator->getLocale();
         }
         
-        $openingTag = "{mlang " . $locale . "}";
-        $closingTag = "{mlang}";
+        $openingTag = "{[ \t]*mlang[ \t]*" . $locale . "[ \t]*}";
+        $closingTag = "{[ \t]*mlang[ \t]*}";
 
         $pattern = "/" . $openingTag . ".*?" . $closingTag . "/";
         $matches = [];
@@ -61,7 +61,7 @@ readonly class AppRuntime implements RuntimeExtensionInterface
 
         // if no tags were matched, try to match tags with default attribute
         if (count($matches[0]) === 0) {
-            $openingTag = "{mlang .*? default}";
+            $openingTag = "{[ \t]*mlang[ \t]*.*?[ \t]*default[ \t]*}";
             $pattern = "/" . $openingTag . ".*?" . $closingTag . "/";
             $matches = [];
             preg_match_all($pattern, $text, $matches);
@@ -78,7 +78,7 @@ readonly class AppRuntime implements RuntimeExtensionInterface
         }
 
         // remove all remaining (unmatched) mlang tags and their content
-        $text = preg_replace("/{mlang .*?}.*?{mlang}/", "", $text);
+        $text = preg_replace("/{[ \t]*mlang[ \t]*.*?[ \t]*}" . ".*?" . $closingTag . "/", "", $text);
 
         return $text;
     }

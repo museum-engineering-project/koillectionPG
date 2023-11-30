@@ -78,15 +78,15 @@ export default class extends Controller {
             return "";
         }
 
-        var openingTag = "{mlang " + Translator.locale + "}";
-        var closingTag = "{mlang}";
+        var openingTag = "{[ \t]*mlang[ \t]*" + Translator.locale + "[ \t]*}";
+        var closingTag = "{[ \t]*mlang[ \t]*}";
 
         var pattern = new RegExp(openingTag + ".*?" + closingTag, 'g');
         var matches = [...text.matchAll(pattern)];
 
         // if no tags were matched, try to match tags with default attribute
         if (matches.length === 0) {
-            openingTag = "{mlang .*? default}";
+            openingTag = "{[ \t]*mlang[ \t]*.*?[ \t]*default[ \t]*}";
             pattern = new RegExp(openingTag + ".*?" + closingTag, 'g');
             matches = [...text.matchAll(pattern)];
         }
@@ -102,7 +102,7 @@ export default class extends Controller {
         }
 
         // remove all remaining (unmatched) mlang tags and their content
-        text = text.replace(new RegExp("{mlang .*?}.*?{mlang}", 'g'), "");
+        text = text.replace(new RegExp("{[ \t]*mlang[ \t]*.*?[ \t]*}" + ".*?" + closingTag, 'g'), "");
 
         return text;
     }
