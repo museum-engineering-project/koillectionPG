@@ -93,7 +93,7 @@ def load_data(path: str, sheet_name: str, skip_empty_columns: bool, skip_empty_f
 
     # drop all rows following the first empty row
     empty_rows = df.isnull().all(axis=1)
-    rows_to_drop = [i for i in range(list(empty_rows).index(True), len(empty_rows))]
+    rows_to_drop = list(range(list(empty_rows).index(True), len(empty_rows)))
     df = df.drop(index=rows_to_drop)
 
     if skip_empty_columns:
@@ -369,7 +369,7 @@ def load_environment_variables(compose_file: str) -> dict:
     :return: dictionary containing the environmental variables and their values
     """
 
-    with open(compose_file, 'r') as file:
+    with open(compose_file, 'r', encoding='utf-8') as file:
         compose = yaml.safe_load(file)
 
     environment = {}
