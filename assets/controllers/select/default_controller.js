@@ -78,15 +78,25 @@ export default class extends Controller {
             return "";
         }
 
-        let pattern = new RegExp("{mlang " + Translator.locale + "}.*?{mlang}", 'g');
-        let matches = [...text.matchAll(pattern)];
+        var openingTag = "{mlang " + Translator.locale + "}";
+        var closingTag = "{mlang}";
+
+        var pattern = new RegExp(openingTag + ".*?" + closingTag, 'g');
+        var matches = [...text.matchAll(pattern)];
+
+        // if no tags were matched, try to match tags with default attribute
+        if (matches.length === 0) {
+            openingTag = "{mlang .*? default}";
+            pattern = new RegExp(openingTag + ".*?" + closingTag, 'g');
+            matches = [...text.matchAll(pattern)];
+        }
 
         // remove mlang tags of matched locale while keeping their content
         for (let match of matches) {
             let originalMatch = match[0];
     
-            match[0] = match[0].replace("{mlang " + Translator.locale + "}", "");
-            match[0] = match[0].replace("{mlang}", "");
+            match[0] = match[0].replace(new RegExp(openingTag), "");
+            match[0] = match[0].replace(new RegExp(closingTag), "");
     
             text = text.replace(originalMatch, match[0]);
         }

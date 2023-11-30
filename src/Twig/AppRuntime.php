@@ -52,18 +52,27 @@ readonly class AppRuntime implements RuntimeExtensionInterface
             $locale = $this->translator->getLocale();
         }
         
-        $locale = preg_quote($locale);
+        $openingTag = "{mlang " . $locale . "}";
+        $closingTag = "{mlang}";
 
-        $pattern = "/{mlang " . $locale . "}.*?{mlang}/";
+        $pattern = "/" . $openingTag . ".*?" . $closingTag . "/";
         $matches = [];
         preg_match_all($pattern, $text, $matches);
+
+        // if no tags were matched, try to match tags with default attribute
+        if (count($matches[0]) === 0) {
+            $openingTag = "{mlang .*? default}";
+            $pattern = "/" . $openingTag . ".*?" . $closingTag . "/";
+            $matches = [];
+            preg_match_all($pattern, $text, $matches);
+        }
 
         // remove mlang tags of matched locale while keeping their content
         foreach ($matches[0] as &$match) {
             $originalMatch = $match;
             
-            $match = str_replace("{mlang " . $locale . "}", "", $match);
-            $match = str_replace("{mlang}", "", $match);
+            $match = preg_replace("/" . $openingTag . "/", "", $match);
+            $match = preg_replace("/" . $closingTag . "/", "", $match);
             
             $text = str_replace($originalMatch, $match, $text);
         }
