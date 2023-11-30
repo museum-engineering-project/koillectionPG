@@ -5,6 +5,7 @@ import ast
 import datetime
 import ipaddress
 import json
+import random
 import subprocess
 import sys
 import uuid
@@ -28,6 +29,10 @@ except ImportError:
 DEFAULT_COLLECTION_VISIBILITY = "private"  # can be changed to "public" or "internal"
 DEFAULT_NAME_COLUMN = "Nazwa"
 DEFAULT_ITEM_NAME = "ITEM NAME NOT FOUND"
+
+COLORS = ["E3F2FD", "F3E5F5", "FBE9E7", "EEEEEE", "E8EAF6"]
+# NOTE: Currently Koillection accepts only these 5 colors.
+#       Their list can be changed in src/Service/ColorPicker.php and in assets/styles/main.css
 
 
 def get_current_time() -> str:
@@ -96,7 +101,7 @@ def load_data(path: str, sheet_name: str, skip_empty_columns: bool, skip_empty_f
             if df[header].isnull().all():
                 headers.remove(header)
 
-    items = [{} for i in range(df.shape[0])]
+    items = [{} for _ in range(df.shape[0])]
 
     for header in headers:
         for row in range(df.shape[0]):
@@ -194,7 +199,7 @@ def insert_collection(cursor: MySQLCursor, owner_id: str, collection_name: str) 
         "id": generate_id(),
         "owner_id": owner_id,
         "title": collection_name,
-        "color": "000000",
+        "color": random.choice(COLORS),
         "seen_counter": 0,
         "visibility": DEFAULT_COLLECTION_VISIBILITY,
         "created_at": get_current_time(),
