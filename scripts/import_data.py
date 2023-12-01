@@ -99,8 +99,11 @@ def load_data(path: str, sheet_name: str, skip_empty_columns: bool, skip_empty_f
 
     # drop all rows following the first empty row
     empty_rows = df.isnull().all(axis=1)
-    rows_to_drop = list(range(list(empty_rows).index(True), len(empty_rows)))
-    df = df.drop(index=rows_to_drop)
+    try:
+        rows_to_drop = list(range(list(empty_rows).index(True), len(empty_rows)))
+        df = df.drop(index=rows_to_drop)
+    except ValueError:
+        pass  # no empty rows found - nothing to drop
 
     if skip_empty_columns:
         for header in headers[:]:
