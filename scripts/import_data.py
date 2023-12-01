@@ -27,7 +27,7 @@ except ImportError:
     sys.exit(1)
 
 
-DEFAULT_COLLECTION_VISIBILITY = "private"  # can be changed to "public" or "internal"
+DEFAULT_COLLECTION_VISIBILITY = "public"  # available options: "public", "private", "internal"
 DEFAULT_NAME_COLUMN = "Nazwa"
 DEFAULT_ITEM_NAME = "ITEM NAME NOT FOUND"
 
@@ -267,13 +267,14 @@ def insert_datum(cursor: MySQLCursor, owner_id: str, item_id: str, datum_name: s
     return datum_data["id"]
 
 
-def insert_item(cursor: MySQLCursor, owner_id: str, collection_id: str, item_name: str) -> str:
+def insert_item(cursor: MySQLCursor, owner_id: str, collection_id: str, item_name: str, item_quantity: int) -> str:
     """
     Inserts a single item into the koi_item table and returns its id
     :param cursor: opened cursor to the koillection database
     :param owner_id: id of the item's owner
     :param collection_id: id of the item's collection
     :param item_name: name of the item
+    :param item_quantity: quantity of the item
     :return: id of the created item
     """
     item_data = {
@@ -281,7 +282,7 @@ def insert_item(cursor: MySQLCursor, owner_id: str, collection_id: str, item_nam
         "collection_id": collection_id,
         "owner_id": owner_id,
         "name": item_name,
-        "quantity": 1,  # todo?
+        "quantity": item_quantity,
         "seen_counter": 0,
         "visibility": "public",
         "created_at": get_current_time(),
@@ -355,6 +356,8 @@ def parse_args() -> dict:
 
     parser.add_argument("-n", "--name_column", type=str, default=DEFAULT_NAME_COLUMN,
                         help=f"Column containing item names. Default={DEFAULT_NAME_COLUMN}")
+    parser.add_argument("-q", "--quantity_column", type=str,
+                        help=f"Column containing item quantity. Quantity is set to 1 if not specified")
     parser.add_argument("-p", "--private_fields", type=str, nargs='+', default=[],
                         help="Column names that will be made private")
     parser.add_argument("-s", "--skip_fields", type=str, nargs='+', default=[],
@@ -427,10 +430,12 @@ def main() -> None:
     for item in items:
         item_name = item.get(args["name_column"], "").strip()
         item_name = DEFAULT_ITEM_NAME if not item_name else item_name
-        item_id = insert_item(cursor, owner_id, collection_id, item_name)
+        item_quantity = 1 if not args["quantity_column"] else item.get(args["quantity_column"], "")
+        item_quantity = 0 if item_quantity == "" else item_quantity
+        item_id = insert_item(cursor, owner_id, collection_id, item_name, item_quantity)
 
         for index, field_name in enumerate(headers):
-            if field_name != args["name_column"] and field_name.lower() not in args["skip_fields"] and item.get(field_name) is not None:
+            if field_name != args["name_column"] and field_name != args["quantity_column"] and field_name.lower() not in args["skip_fields"] and item.get(field_name) is not None:
                 insert_datum(cursor, owner_id, item_id, field_name, item[field_name], index + 1,
                              "private" if field_name.lower() in args["private_fields"] else "public")
 
