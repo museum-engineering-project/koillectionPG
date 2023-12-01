@@ -137,10 +137,10 @@
     <body>
         <div class="label" size="{{ labelSize }}" orientation="{{ orientation }}">
             <div class="content">
-                <h2>{{ objectName }}</h2>
+                <h2>{{ objectName|transMlang }}</h2>
                 {% for datum in objectData %}
                     <p>
-                       <b>{{ datum.label }}:</b> {{ datum.value }}
+                       <b>{{ datum.label|transMlang }}:</b> {{ datum.value|transMlang }}
                     </p>
                 {% endfor %}
             </div>

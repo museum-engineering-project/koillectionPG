@@ -12,7 +12,7 @@
 
 {% block content %}
     <div class="title-block">
-        <h1>{{ 'title.generate_label_item'|trans({'item': item.name}) }}</h1>
+        <h1>{{ 'title.generate_label_item'|trans({'item': item.name|transMlang}) }}</h1>
     </div>
 
     <div class="content-block">
@@ -59,7 +59,7 @@
                             </td>
                             <td data-column="name">
                                 <span data-value='{{ form_label(field)|striptags }}'>
-                                    {{ form_label(field)|striptags }}
+                                    {{ form_label(field)|transMlang|striptags }}
                                 </span>
                             </td>
                         </tr>
