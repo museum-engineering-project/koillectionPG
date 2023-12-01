@@ -85,8 +85,8 @@
             <div class="tableContainer">
                 <table>
                 <tr>
-                <th>L.p.</th>
-                <th>Nazwa</th>
+                <th>{{ 'label.labels_item_index'|trans }}</th>
+                <th>{{ 'label.name'|trans }}</th>
                 {% for field in fields %}
                     <th>{{ field|transMlang }}</th>
                 {% endfor %}
