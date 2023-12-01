@@ -79,7 +79,7 @@ function transMlang(text) {
         return "";
     }
 
-    var openingTag = "{[ \t]*mlang[ \t]*" + Translator.locale + "[ \t]*}";
+    var openingTag = "{[ \t]*mlang[ \t]*" + Translator.locale + "[ \t]*(default)?[ \t]*}";
     var closingTag = "{[ \t]*mlang[ \t]*}";
 
     var pattern = new RegExp(openingTag + ".*?" + closingTag, 'g');

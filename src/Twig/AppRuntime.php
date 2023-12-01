@@ -52,7 +52,7 @@ readonly class AppRuntime implements RuntimeExtensionInterface
             $locale = $this->translator->getLocale();
         }
         
-        $openingTag = "{[ \t]*mlang[ \t]*" . $locale . "[ \t]*}";
+        $openingTag = "{[ \t]*mlang[ \t]*" . $locale . "[ \t]*(default)?[ \t]*}";
         $closingTag = "{[ \t]*mlang[ \t]*}";
 
         $pattern = "/" . $openingTag . ".*?" . $closingTag . "/";
