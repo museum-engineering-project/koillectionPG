@@ -326,7 +326,17 @@ def parse_args() -> dict:
     Parses the command line arguments
     :return: dictionary containing the arguments
     """
-    parser = argparse.ArgumentParser(description="Import data from a file (Excel or csv) into Koillection database")
+    example_usage = "Example usage:\n\t"\
+                    "./import_data.py -f zestawy.xls -F ./../docker-compose-koillectionPG_dev.yml "\
+                    "-S \"Karty Graficzne\" -c \"Karty Graficzne\" -p Uwagi \"Informacje dodatkowe\" -s L.p. wystawa? "\
+                    "--skip_empty_columns\n\n\t"\
+                    "- Will import data from the 'Karty Graficzne' sheet of 'zestawy.xls' file, using the "\
+                    "'./../docker-compose-koillectionPG_dev.yml' compose file, into a collection named "\
+                    "'Karty Graficzne', while marking fields 'Uwagi' and 'Informacje dodatkowe' as private, "\
+                    "skipping importing fields 'L.p.' and 'wystawa?', and skipping all empty columns."
+    parser = argparse.ArgumentParser(description="Import data from a file (Excel or csv) into Koillection database",
+                                     epilog=example_usage,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("-f", "--file", type=str, required=True, help="Path to the file containing data")
     parser.add_argument("-F", "--compose_file", type=str, required=True, help="Path to the docker compose file")
 
