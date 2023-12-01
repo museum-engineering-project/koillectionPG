@@ -31,6 +31,9 @@ DEFAULT_COLLECTION_VISIBILITY = "public"  # available options: "public", "privat
 DEFAULT_NAME_COLUMN = "Nazwa"
 DEFAULT_ITEM_NAME = "ITEM NAME NOT FOUND"
 
+MAX_SHORT_TEXT_LENGTH = 64  # max length (characters) of short text ("text") fields. Columns having at least one value
+                            # longer than that will be imported as long text ("textarea")
+
 COLORS = ["E3F2FD", "F3E5F5", "FBE9E7", "EEEEEE", "E8EAF6"]
 # NOTE: Currently Koillection accepts only these 5 colors.
 #       Their list can be changed in src/Service/ColorPicker.php and in assets/styles/main.css
@@ -71,15 +74,16 @@ def generate_id() -> str:
     return str(uuid.uuid4())
 
 
-def load_data(path: str, sheet_name: str, skip_empty_columns: bool, skip_empty_fields: bool) -> tuple[list[dict], list[str]]:
+def load_data(path: str, sheet_name: str, skip_empty_columns: bool, skip_empty_fields: bool) -> tuple[list[dict], list[str], dict[str]]:
     """
-    Loads data from the provided Excel file. Returns dictionary containing all loaded data,
-    and a list of the file's headers
+    Loads data from the provided Excel file. Returns a list containing dictionaries of each loaded item,
+    a list of the file's headers, and a dictionary specifying the types of headers' fields (text or textarea)
     :param path: path to the Excel file
     :param sheet_name: name of the Excel sheet to load data from
     :param skip_empty_columns: whether or not empty columns should be omitted from the final result
     :param skip_empty_fields: whether or not empty fields should be omitted from the final result (works per row)
-    :return:
+    :return: list containing dictionaries of each loaded item,
+        a list of the file's headers, and a dictionary specifying the types of headers' fields (text or textarea)
     """
     if sheet_name is None:
         sheet_name = 0  # load first sheet if sheet_name is not provided
@@ -96,6 +100,14 @@ def load_data(path: str, sheet_name: str, skip_empty_columns: bool, skip_empty_f
     # drop columns with duplicate names (pandas automatically adds .1 .2 .3, etc. suffix to columns with the same names)
 
     headers = list(df)
+
+    header_types = {}
+    for header in headers:
+        max_length = df[header].str.len().max()
+        if max_length is not None and max_length > MAX_SHORT_TEXT_LENGTH:
+            header_types[header] = "textarea"
+        else:
+            header_types[header] = "text"
 
     # drop all rows following the first empty row
     empty_rows = df.isnull().all(axis=1)
@@ -121,7 +133,7 @@ def load_data(path: str, sheet_name: str, skip_empty_columns: bool, skip_empty_f
             if not skip_empty_fields or value.strip() != '':
                 items[row][header] = value
 
-    return items, headers
+    return items, headers, header_types
 
 
 def db_get_username(cursor: MySQLCursor) -> str:
@@ -232,7 +244,7 @@ def insert_collection(cursor: MySQLCursor, owner_id: str, collection_name: str) 
     return collection_data["id"]
 
 
-def insert_datum(cursor: MySQLCursor, owner_id: str, item_id: str, datum_name: str, datum_value: str, datum_position: int, visibility: str) -> str:
+def insert_datum(cursor: MySQLCursor, owner_id: str, item_id: str, datum_name: str, datum_value: str, datum_type: str, datum_position: int, visibility: str) -> str:
     """
     Inserts a single datum into the koi_datum table and returns its id
     :param cursor: opened cursor to the koillection database
@@ -240,6 +252,7 @@ def insert_datum(cursor: MySQLCursor, owner_id: str, item_id: str, datum_name: s
     :param item_id: id of the item this datum refers to
     :param datum_name: name of the datum
     :param datum_value: value of the datum
+    :param datum_type: type of the datum (currently text or textarea, although Koillection allows more types)
     :param datum_position: position of the datum in the item (datums are displayed in ascending position order)
     :param visibility: visibility of the datum (public/private/internal)
     :return: id of the created datum
@@ -248,7 +261,7 @@ def insert_datum(cursor: MySQLCursor, owner_id: str, item_id: str, datum_name: s
         "id": generate_id(),
         "item_id": item_id,
         "owner_id": owner_id,
-        "type": "text",
+        "type": datum_type,
         "label": datum_name,
         "value": datum_value,
         "position": datum_position,
@@ -417,7 +430,7 @@ def main() -> None:
     )
     cursor = cnx.cursor()
 
-    items, headers = load_data(args["file"], args["sheet"], args["skip_empty_columns"], args["skip_empty_fields"])
+    items, headers, header_types = load_data(args["file"], args["sheet"], args["skip_empty_columns"], args["skip_empty_fields"])
 
     username = args["user"] if args["user"] else db_get_username(cursor)
 
@@ -436,8 +449,16 @@ def main() -> None:
 
         for index, field_name in enumerate(headers):
             if field_name != args["name_column"] and field_name != args["quantity_column"] and field_name.lower() not in args["skip_fields"] and item.get(field_name) is not None:
-                insert_datum(cursor, owner_id, item_id, field_name, item[field_name], index + 1,
-                             "private" if field_name.lower() in args["private_fields"] else "public")
+                insert_datum(
+                    cursor=cursor,
+                    owner_id=owner_id,
+                    item_id=item_id,
+                    datum_name=field_name,
+                    datum_value=item[field_name],
+                    datum_type=header_types[field_name],
+                    datum_position=index + 1,
+                    visibility="private" if field_name.lower() in args["private_fields"] else "public"
+                )
 
         insert_log(cursor, owner_id, item_id, item_name, "App\\Entity\\Item")
         # todo maybe insert a log entry for creating the collection as well? And display configuration?
