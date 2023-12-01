@@ -6,6 +6,7 @@ import datetime
 import ipaddress
 import json
 import random
+import re
 import subprocess
 import sys
 import uuid
@@ -89,6 +90,11 @@ def load_data(path: str, sheet_name: str, skip_empty_columns: bool, skip_empty_f
         df = pd.read_csv(path, dtype=str)
 
     df = df.loc[:, ~df.columns.str.contains('^Unnamed')]  # drop unnamed columns
+
+    duplicate_columns = [col for col in df.columns if re.search(r'\.[0-9]+$', col)]
+    df = df.drop(columns=duplicate_columns)
+    # drop columns with duplicate names (pandas automatically adds .1 .2 .3, etc. suffix to columns with the same names)
+
     headers = list(df)
 
     # drop all rows following the first empty row
@@ -416,8 +422,8 @@ def main() -> None:
 
     # insert all items
     for item in items:
-        item_name = item.get(args["name_column"])
-        item_name = DEFAULT_ITEM_NAME if item_name is None else item_name
+        item_name = item.get(args["name_column"], "").strip()
+        item_name = DEFAULT_ITEM_NAME if not item_name else item_name
         item_id = insert_item(cursor, owner_id, collection_id, item_name)
 
         for index, field_name in enumerate(headers):
