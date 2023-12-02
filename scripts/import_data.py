@@ -3,6 +3,7 @@
 import argparse
 import ast
 import datetime
+import importlib.util
 import ipaddress
 import json
 import random
@@ -16,15 +17,20 @@ try:
     from mysql.connector.connection import MySQLCursor
     import pandas as pd
     import yaml
-    import xlrd  # used by pandas
-except ImportError:
+except ImportError as e:
+    print(e)
+    print()
     print("The following modules are required:")
     print("mysql-connector-python")
     print("pandas")
     print("PyYAML")
-    print("xlrd")
     print("You can install them with: pip install {module name}")
     sys.exit(1)
+
+if importlib.util.find_spec("xlrd") is None:
+    print()
+    print("The xlrd module was not found. Importing Excel files will not work (only CSV).")
+    print("You can install it with: pip install xlrd\n")
 
 
 DEFAULT_COLLECTION_VISIBILITY = "public"  # available options: "public", "private", "internal"
@@ -189,10 +195,10 @@ def insert_display_configuration(cursor: MySQLCursor, owner_id: str) -> str:
     display_configuration_data = {
         "id": generate_id(),
         "owner_id": owner_id,
-        "display_mode": "list",  # or grid
-        "sorting_direction": "ASC",
+        "display_mode": "list",  # available options: "list", "grid"
+        "sorting_direction": "ASC",  # available options: "ASC", "DESC"
         "created_at": get_current_time(),
-        "columns": "a:0:{}"  # I have no idea what this does
+        "columns": "a:0:{}"
     }
     insert_statement = (
         "INSERT INTO "
@@ -225,7 +231,7 @@ def insert_collection(cursor: MySQLCursor, owner_id: str, collection_name: str) 
         "visibility": DEFAULT_COLLECTION_VISIBILITY,
         "created_at": get_current_time(),
         "final_visibility": DEFAULT_COLLECTION_VISIBILITY,
-        "items_default_template_id": None,  # todo?
+        "items_default_template_id": None,
         "children_display_configuration_id": children_display_configuration_id,
         "items_display_configuration_id": items_display_configuration_id,
         "cached_values": """{"prices": [], "counters": {"items": 0, "children": 0}}"""
@@ -370,7 +376,7 @@ def parse_args() -> dict:
     parser.add_argument("-n", "--name_column", type=str, default=DEFAULT_NAME_COLUMN,
                         help=f"Column containing item names. Default={DEFAULT_NAME_COLUMN}")
     parser.add_argument("-q", "--quantity_column", type=str,
-                        help=f"Column containing item quantity. Quantity is set to 1 if not specified")
+                        help="Column containing item quantity. Quantity is set to 1 if not specified")
     parser.add_argument("-p", "--private_fields", type=str, nargs='+', default=[],
                         help="Column names that will be made private")
     parser.add_argument("-s", "--skip_fields", type=str, nargs='+', default=[],
@@ -461,7 +467,6 @@ def main() -> None:
                 )
 
         insert_log(cursor, owner_id, item_id, item_name, "App\\Entity\\Item")
-        # todo maybe insert a log entry for creating the collection as well? And display configuration?
 
     # update the collection's cached values to reflect the current items number
     cursor.execute(f"SELECT cached_values FROM koi_collection WHERE id='{collection_id}'")
