@@ -47,7 +47,7 @@ COLORS = ["E3F2FD", "F3E5F5", "FBE9E7", "EEEEEE", "E8EAF6"]
 
 def get_current_time() -> str:
     """Returns the current time in YYYY-MM-DD-hh:mm:ss format"""
-    return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
 def get_database_host(container_name: str) -> str:
@@ -80,7 +80,7 @@ def generate_id() -> str:
     return str(uuid.uuid4())
 
 
-def load_data(path: str, sheet_name: str, skip_empty_columns: bool, skip_empty_fields: bool) -> tuple[list[dict], list[str], dict[str]]:
+def load_data(path: str, sheet_name: str, skip_empty_columns: bool, skip_empty_fields: bool, fields_to_skip: list[str]) -> tuple[list[dict], list[str], dict[str]]:
     """
     Loads data from the provided Excel file. Returns a list containing dictionaries of each loaded item,
     a list of the file's headers, and a dictionary specifying the types of headers' fields (text or textarea)
@@ -88,6 +88,7 @@ def load_data(path: str, sheet_name: str, skip_empty_columns: bool, skip_empty_f
     :param sheet_name: name of the Excel sheet to load data from
     :param skip_empty_columns: whether or not empty columns should be omitted from the final result
     :param skip_empty_fields: whether or not empty fields should be omitted from the final result (works per row)
+    :param fields_to_skip: a list of fields (a.k.a. headers) to skip when loading data from file
     :return: list containing dictionaries of each loaded item,
         a list of the file's headers, and a dictionary specifying the types of headers' fields (text or textarea)
     """
@@ -99,7 +100,7 @@ def load_data(path: str, sheet_name: str, skip_empty_columns: bool, skip_empty_f
     except ValueError:
         df = pd.read_csv(path, dtype=str)
 
-    df = df.loc[:, ~df.columns.str.contains('^Unnamed')]  # drop unnamed columns
+    df = df.loc[:, ~df.columns.str.contains("^Unnamed")]  # drop unnamed columns
 
     duplicate_columns = [col for col in df.columns if re.search(r'\.[0-9]+$', col)]
     df = df.drop(columns=duplicate_columns)
@@ -128,16 +129,29 @@ def load_data(path: str, sheet_name: str, skip_empty_columns: bool, skip_empty_f
             if df[header].isnull().all():
                 headers.remove(header)
 
+    # drop columns from fields_to_skip
+    for header in list(df):
+        if header.strip().lower() in fields_to_skip:
+            df.drop(columns=header, inplace=True)
+    headers = list(df)
+
     items = [{} for _ in range(df.shape[0])]
 
     for header in headers:
         for row in range(df.shape[0]):
             value = df[header][row]
             if type(value) is float:  # because pandas imports empty cells as float("nan") (even with dtype=str)
-                value = ''
+                value = ""
 
-            if not skip_empty_fields or value.strip() != '':
-                items[row][header] = value
+            if not skip_empty_fields or value.strip() != "":
+                items[row][header] = value.strip()
+
+    empty_items = []
+    for item in items:
+        if all(not value for value in item.values()):
+            empty_items.append(item)
+    for item in empty_items:
+        items.remove(item)
 
     return items, headers, header_types
 
@@ -436,7 +450,7 @@ def main() -> None:
     )
     cursor = cnx.cursor()
 
-    items, headers, header_types = load_data(args["file"], args["sheet"], args["skip_empty_columns"], args["skip_empty_fields"])
+    items, headers, header_types = load_data(args["file"], args["sheet"], args["skip_empty_columns"], args["skip_empty_fields"], args["skip_fields"])
 
     username = args["user"] if args["user"] else db_get_username(cursor)
 
@@ -454,7 +468,7 @@ def main() -> None:
         item_id = insert_item(cursor, owner_id, collection_id, item_name, item_quantity)
 
         for index, field_name in enumerate(headers):
-            if field_name != args["name_column"] and field_name != args["quantity_column"] and field_name.lower() not in args["skip_fields"] and item.get(field_name) is not None:
+            if field_name != args["name_column"] and field_name != args["quantity_column"] and item.get(field_name) is not None:
                 insert_datum(
                     cursor=cursor,
                     owner_id=owner_id,
