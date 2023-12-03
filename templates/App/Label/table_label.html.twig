@@ -85,20 +85,20 @@
             <div class="tableContainer">
                 <table>
                 <tr>
-                <th>L.p.</th>
-                <th>Nazwa</th>
+                <th>{{ 'label.labels_item_index'|trans }}</th>
+                <th>{{ 'label.name'|trans }}</th>
                 {% for field in fields %}
-                    <th>{{ field }}</th>
+                    <th>{{ field|transMlang }}</th>
                 {% endfor %}
                 </tr>
 
                 {% for item in items %}
                 <tr>
                     <td>{{ loop.index }}</td>
-                    <td>{{ item.getName() }}</td>
+                    <td>{{ item.getName()|transMlang }}</td>
                     {% for field in fields %}
-                    {% set datum = item.getDatumByLabelCaseInsensitive(field)%}
-                    <td>{{ datum ? datum.getValue() : "" }}</td>
+                    {% set datum = item.getDatumByLabelCaseInsensitive(field) %}
+                    <td>{{ datum ? datum.getValue()|transMlang : "" }}</td>
                     {% endfor %}
                 </tr>
                 {% endfor %}

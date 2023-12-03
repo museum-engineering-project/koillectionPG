@@ -30,11 +30,11 @@
                     {% if album.image != null %}
                         <img class="thumbnail avatar" src="{{ preload(asset(album.image), {as: 'image'}) }}">
                     {% else %}
-                        <span class="thumbnail color-avatar circle avatar color-{{ album.color }}">{{ album.title|first|upper }}</span>
+                        <span class="thumbnail color-avatar circle avatar color-{{ album.color }}">{{ album.title|transMlang|first|upper }}</span>
                     {% endif %}
                 </div>
                 <div>
-                    <h1>{{ album.title }}</h1>
+                    <h1>{{ album.title|transMlang }}</h1>
                     <ul class="nav nav-pills">
                         <li>{{ 'counter.photo'|trans({'count': album.cachedValues.counters.photos|default(0)}) }}</li>
                         <li>{{ 'counter.album'|trans({'count': album.cachedValues.counters.children|default(0)}) }}</li>

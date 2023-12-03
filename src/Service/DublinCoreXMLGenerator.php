@@ -5,14 +5,18 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Item;
+use App\Twig\AppRuntime;
 use Twig\Environment;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DublinCoreXMLGenerator
 {
     public function __construct(
         private Environment $twig,
-        private UrlGeneratorInterface $urlGenerator
+        private AppRuntime $appRuntime,
+        private UrlGeneratorInterface $urlGenerator,
+        private TranslatorInterface $translator,
     )
     {}
 
@@ -42,13 +46,15 @@ class DublinCoreXMLGenerator
         $xmlElement = htmlspecialchars($reqDomain, ENT_XML1 | ENT_QUOTES, 'UTF-8');
         $xml .= $this->printWithTab("<metadata xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:koillectionPG=\"{$xmlElement}/koillectionPG\">\n", 0);
 
-        // dc.title (__toString())
-        $xmlElement = htmlspecialchars((string)$item, ENT_XML1 | ENT_QUOTES, 'UTF-8');
+        // dc.title (item name)
+        $xmlElement = $this->appRuntime->transMlang((string)$item);
+        $xmlElement = htmlspecialchars($xmlElement, ENT_XML1 | ENT_QUOTES, 'UTF-8');
         $filename = $xmlElement.$filename_postfix;
         $xml .= $this->printWithTab("<dc:title>{$xmlElement}</dc:title>\n", 1);
 
         // dc.type (collection name)
-        $xmlElement = htmlspecialchars((string)$item->getCollection(), ENT_XML1 | ENT_QUOTES, 'UTF-8');
+        $xmlElement = $this->appRuntime->transMlang((string)$item->getCollection());
+        $xmlElement = htmlspecialchars($xmlElement, ENT_XML1 | ENT_QUOTES, 'UTF-8');
         $xml .= $this->printWithTab("<dc:type>{$xmlElement}</dc:type>\n", 1);
 
         // dc.publisher (username)
@@ -64,20 +70,24 @@ class DublinCoreXMLGenerator
         // dc.relation (related items)
         foreach ($item->getRelatedItems() as $relItem)
         {
-            $xmlElement = htmlspecialchars((string)$relItem, ENT_XML1, 'UTF-8');
+            $xmlElement = $this->appRuntime->transMlang((string)$relItem);
+            $xmlElement = htmlspecialchars($xmlElement, ENT_XML1, 'UTF-8');
             $xml .= $this->printWithTab("<dc:relation>{$xmlElement}<dc:relation>\n", 1);
         }
 
         // dc.language (default description language)
-        $xml .= $this->printWithTab("<dc:language>Polish</dc:language>\n", 1);
+        $xmlElement = $this->translator->getLocale();
+        $xmlElement = htmlspecialchars($xmlElement, ENT_XML1, 'UTF-8');
+        $xml .= $this->printWithTab("<dc:language>{$xmlElement}</dc:language>\n", 1);
 
         // koilectionPG: (other item properties) or description
         $koillectionPGXML = "";
         foreach ($itemData as $data)
         {
             // XML doesn't accept spaces in markup name and parenthesis
-            $label = str_replace(")", "", str_replace("(", "", str_replace(" ", "-", strToLower($data->getLabel()))));
-            $value = $data->getValue();
+            $label = $this->appRuntime->transMlang($data->getLabel());
+            $label = str_replace(")", "", str_replace("(", "", str_replace(" ", "-", strToLower($label))));
+            $value = $this->appRuntime->transMlang($data->getValue());
             $free_value = htmlspecialchars((string)$value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
             $free_label = htmlspecialchars((string)$label, ENT_XML1 | ENT_QUOTES, 'UTF-8');
             if ($label == "description" || $label == "year") {
