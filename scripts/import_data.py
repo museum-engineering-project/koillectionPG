@@ -27,7 +27,7 @@ except ImportError as e:
     print("You can install them with: pip install {module name}")
     sys.exit(1)
 
-if importlib.util.find_spec("xlrd") is None:
+if not importlib.util.find_spec("xlrd"):
     print()
     print("The xlrd module was not found. Importing Excel files will not work (only CSV).")
     print("You can install it with: pip install xlrd\n")
@@ -63,8 +63,8 @@ def get_database_host(container_name: str) -> str:
         ).stdout
 
         ipaddress.ip_address(host.strip())
-    except (ValueError, subprocess.CalledProcessError) as e:
-        print(e)
+    except (ValueError, subprocess.CalledProcessError) as err:
+        print(err)
         print()
         print("Could not automatically determine the database host IP address.")
         print("Please provide host with the --host argument.")
@@ -178,23 +178,20 @@ def db_get_username(cursor: MySQLCursor) -> str:
     return usernames[0]
 
 
-def db_get_collection_id(cursor: MySQLCursor, collection_name: str, owner_id: str) -> str:
+def db_get_collection_id(cursor: MySQLCursor, collection_name: str) -> str | None:
     """
-    Finds a collection with the provided name. If it doesn't exist, creates a new collection belonging to owner_id.
-    Returns the collection id.
+    Finds a collection with the provided name. Returns the collection id if it exists or None otherwise
     :param cursor: opened cursor to the koillection database
-    :param collection_name: name of the collection to find or create
-    :param owner_id: id of the collection owner (applicable if creating a new collection)
-    :return: collection id
+    :param collection_name: name of the collection to find
+    :return: collection id or None if collection with specified name doesn't exist
     """
     cursor.execute("SELECT title FROM koi_collection")
     collection_names = [name[0] for name in cursor.fetchall()]
-    if collection_name not in collection_names:  # create a new collection
-        collection_id = insert_collection(cursor, owner_id, collection_name)
-        insert_log(cursor, owner_id, collection_id, collection_name, "App\\Entity\\Collection")
-    else:
-        cursor.execute(f"SELECT id FROM koi_collection WHERE title='{collection_name}'")
-        collection_id = cursor.fetchone()[0]
+    if collection_name not in collection_names:
+        return None
+
+    cursor.execute(f"SELECT id FROM koi_collection WHERE title='{collection_name}'")
+    collection_id = cursor.fetchone()[0]
 
     return collection_id
 
@@ -224,12 +221,68 @@ def insert_display_configuration(cursor: MySQLCursor, owner_id: str) -> str:
     return display_configuration_data["id"]
 
 
-def insert_collection(cursor: MySQLCursor, owner_id: str, collection_name: str) -> str:
+def insert_template(cursor: MySQLCursor, owner_id: str, template_name: str) -> str:
+    """
+    Inserts a single template into the koi_template table and returns its id
+    :param cursor: opened cursor to the koillection database
+    :param owner_id: id of the template's owner
+    :param template_name: name of the template
+    :return: id of the created template
+    """
+    template_data = {
+        "id": generate_id(),
+        "owner_id": owner_id,
+        "name": template_name,
+        "created_at": get_current_time(),
+    }
+    insert_statement = (
+        "INSERT INTO "
+        "koi_template (id, owner_id, name, created_at)"
+        "values       (%(id)s, %(owner_id)s, %(name)s, %(created_at)s)"
+    )
+    cursor.execute(insert_statement, template_data)
+
+    return template_data["id"]
+
+
+def insert_field(cursor: MySQLCursor, owner_id: str, template_id: str, field_name: str, field_type: str, field_position: int, visibility: str) -> str:
+    """
+    Inserts a single template field into the koi_field table and returns its id
+    :param cursor: opened cursor to the koillection database
+    :param owner_id: id of the field's owner (user)
+    :param template_id: id of the template this field refers to
+    :param field_name: name of the field
+    :param field_type: type of the field (currently text or textarea, although Koillection allows more types)
+    :param field_position: position of the field in the template (fields are displayed in ascending position order)
+    :param visibility: visibility of the field (public/private/internal)
+    :return: id of the created field
+    """
+    field_data = {
+        "id": generate_id(),
+        "template_id": template_id,
+        "name": field_name,
+        "position": field_position,
+        "type": field_type,
+        "owner_id": owner_id,
+        "visibility": visibility,
+    }
+    insert_statement = (
+        "INSERT INTO "
+        "koi_field (id, template_id, name, position, type, owner_id, visibility)"
+        "values    (%(id)s, %(template_id)s, %(name)s, %(position)s, %(type)s, %(owner_id)s, %(visibility)s)"
+    )
+    cursor.execute(insert_statement, field_data)
+
+    return field_data["id"]
+
+
+def insert_collection(cursor: MySQLCursor, owner_id: str, collection_name: str, items_template_id: str) -> str:
     """
     Inserts a single collection into the koi_collection table and returns its id
     :param cursor: opened cursor to the koillection database
     :param owner_id: id of the collection's owner
     :param collection_name: name of the collection
+    :param items_template_id: id of the default template applied to new items in this collection
     :return: id of the created collection
     """
 
@@ -245,7 +298,7 @@ def insert_collection(cursor: MySQLCursor, owner_id: str, collection_name: str) 
         "visibility": DEFAULT_COLLECTION_VISIBILITY,
         "created_at": get_current_time(),
         "final_visibility": DEFAULT_COLLECTION_VISIBILITY,
-        "items_default_template_id": None,
+        "items_default_template_id": items_template_id,
         "children_display_configuration_id": children_display_configuration_id,
         "items_display_configuration_id": items_display_configuration_id,
         "cached_values": """{"prices": [], "counters": {"items": 0, "children": 0}}"""
@@ -457,7 +510,26 @@ def main() -> None:
     cursor.execute(f"SELECT id FROM koi_user WHERE username='{username}'")
     owner_id = cursor.fetchone()[0]
 
-    collection_id = db_get_collection_id(cursor, args["collection"], owner_id)
+    collection_id = db_get_collection_id(cursor, args["collection"])
+
+    # if the collection doesn't exist, create an appropriate new template, and a new collection
+    if not collection_id:
+        template_id = insert_template(cursor, owner_id, args["collection"])
+        for index, field_name in enumerate(headers):
+            if field_name != args["name_column"] and field_name != args["quantity_column"]:
+                insert_field(
+                    cursor=cursor,
+                    owner_id=owner_id,
+                    template_id=template_id,
+                    field_name=field_name,
+                    field_type=header_types[field_name],
+                    field_position=index + 1,
+                    visibility="private" if field_name.lower() in args["private_fields"] else "public"
+                )
+        insert_log(cursor, owner_id, template_id, args["collection"], "App\\Entity\\Template")
+
+        collection_id = insert_collection(cursor, owner_id, args["collection"], template_id)
+        insert_log(cursor, owner_id, collection_id, args["collection"], "App\\Entity\\Collection")
 
     # insert all items
     for item in items:
