@@ -51,11 +51,11 @@
                         <tr class="list-element resize-element" data-title="{{ choiceList.name }}"
                             data-filter-target="element">
                             <td>
-                                <strong>{{ choiceList.name }}</strong>
+                                <strong>{{ choiceList.name|transMlang }}</strong>
                             </td>
                             <td>
                                 {% for choice in choiceList.choices %}
-                                    {{ choice }}{% if loop.last == false %},{% endif %}
+                                    {{ choice|transMlang }}{% if loop.last == false %},{% endif %}
                                 {% endfor %}
                             </td>
                             <td class="table-actions">

@@ -50,7 +50,7 @@
                             data-filter-target="element">
                             <td>
                                 <a href="{{ path('app_template_show', {'id' : result.template.id}) }}">
-                                    <strong>{{ result.template.name }}</strong>
+                                    <strong>{{ result.template.name|transMlang }}</strong>
                                 </a>
                             </td>
                             <td>{{ 'counter.field'|trans({'count': result.fieldsCounter}) }}</td>
