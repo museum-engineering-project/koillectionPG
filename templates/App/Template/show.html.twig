@@ -12,7 +12,7 @@
 
 {% block content %}
     <div class="title-block">
-        <h1>{{ template.name }}</h1>
+        <h1>{{ template.name|transMlang }}</h1>
         <ul class="nav nav-pills">
             <li>{{ 'counter.field'|trans({'count': template.fields|length}) }}</li>
         </ul>
@@ -46,7 +46,7 @@
                 <tbody>
                     {% for field in template.fields %}
                         <tr class="list-element">
-                            <td>{{ field.name }}</td>
+                            <td>{{ field.name|transMlang }}</td>
                             <td>{{ field.typeLabel|trans }}</td>
                             <td>{{ field.choiceList.name|default('-') }}</td>
                         </tr>

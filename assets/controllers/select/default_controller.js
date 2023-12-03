@@ -58,7 +58,7 @@ export default class extends Controller {
             return htmlStringToDomElement('<span class="select-placeholder">' + Translator.trans('select2.none') + '</span>');
         }
 
-        return htmlStringToDomElement('<div><span>' + element.text + '</span></div>');
+        return htmlStringToDomElement('<div><span>' + transMlang(element.text) + '</span></div>');
     }
 
     templateResult(element) {
@@ -66,10 +66,44 @@ export default class extends Controller {
             return htmlStringToDomElement('<div><span class="select-placeholder">' + Translator.trans('select2.none') + '</span></div>');
         }
 
-        return htmlStringToDomElement('<div><span>' + element.text + '</span></div>');
+        return htmlStringToDomElement('<div><span>' + transMlang(element.text) + '</span></div>');
     }
 
     update({ detail: { value } }) {
         this.select2.val(value);
     }
+}
+
+function transMlang(text) {
+    if (text === null) {
+        return "";
+    }
+
+    var openingTag = "{[ \t]*mlang[ \t]+" + Translator.locale + "([ \t]+default)?[ \t]*}";
+    var closingTag = "{[ \t]*mlang[ \t]*}";
+
+    var pattern = new RegExp(openingTag + ".*?" + closingTag, 'g');
+    var matches = [...text.matchAll(pattern)];
+
+    // if no tags were matched, try to match tags with default attribute
+    if (matches.length === 0) {
+        openingTag = "{[ \t]*mlang([ \t]+.*)?[ \t]+default[ \t]*}";
+        pattern = new RegExp(openingTag + ".*?" + closingTag, 'g');
+        matches = [...text.matchAll(pattern)];
+    }
+
+    // remove mlang tags of matched locale while keeping their content
+    for (let match of matches) {
+        let originalMatch = match[0];
+
+        match[0] = match[0].replace(new RegExp(openingTag), "");
+        match[0] = match[0].replace(new RegExp(closingTag), "");
+
+        text = text.replace(originalMatch, match[0]);
+    }
+
+    // remove all remaining (unmatched) mlang tags and their content
+    text = text.replace(new RegExp("{[ \t]*mlang([ \t]+.*)?[ \t]*}" + ".*?" + closingTag, 'g'), "");
+
+    return text;
 }

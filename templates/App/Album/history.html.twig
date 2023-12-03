@@ -18,11 +18,11 @@
                     <img class="thumbnail avatar" src="{{ preload(asset(album.image), {as: 'image'}) }}">
                 {% else %}
                     <span class="thumbnail color-avatar circle avatar color-{{ album.color }}"
-                          aria-hidden="true">{{ album.title|first|upper }}</span>
+                          aria-hidden="true">{{ album.title|transMlang|first|upper }}</span>
                 {% endif %}
             </div>
             <div>
-                <h1>{{ album.title }}</h1>
+                <h1>{{ album.title|transMlang }}</h1>
                 <ul class="nav nav-pills">
                 </ul>
             </div>

@@ -1,7 +1,7 @@
 {% macro recursiveCollection(collection, collections) %}
     {% import _self as self %}
     <li class="collection">
-        <span>{{ collection.title }}</span>
+        <span>{{ collection.title|transMlang }}</span>
         {% if collection.children|length %}
             <ul>
                 {% for child in collection.children %}
@@ -15,7 +15,7 @@
             <ul>
                 {% for item in collection.items|naturalSorting %}
                     <li class="item">
-                        <input type="checkbox">{{ item.name }}</li>
+                        <input type="checkbox">{{ item.name|transMlang }}</li>
                 {% endfor %}
             </ul>
         {% endif %}

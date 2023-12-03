@@ -24,7 +24,7 @@
                 </td>
                 <td>
                     <a class="table-link" href="{{ link }}"></a>
-                    {{ child.title|u.truncate(50, '...') }}
+                    {{ child.title|transMlang|u.truncate(50, '...') }}
                 </td>
                 {% if context == 'default' %}
                     <td class="center">

@@ -56,7 +56,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <a href="{{ path('app_item_show', {'id': loan.item.id}) }}">{{ loan.item.name }}</a>
+                                <a href="{{ path('app_item_show', {'id': loan.item.id}) }}">{{ loan.item.name|transMlang }}</a>
                             </td>
                             <td>{{ loan.lentTo }}</td>
                             <td>{{ loan.lentAt|date(app.user.dateFormat|default('Y-m-d'), app.user.timezone|default('UTC')) }}</td>
@@ -99,7 +99,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <a href="{{ path('app_item_show', {'id': returnedItem.item.id}) }}">{{ returnedItem.item.name }}</a>
+                                <a href="{{ path('app_item_show', {'id': returnedItem.item.id}) }}">{{ returnedItem.item.name|transMlang }}</a>
                             </td>
                             <td>{{ returnedItem.lentTo }}</td>
                             <td class="hide-on-small-only">{{ returnedItem.lentAt|date(app.user.dateFormat|default('Y-m-d'), app.user.timezone|default('UTC')) }}</td>

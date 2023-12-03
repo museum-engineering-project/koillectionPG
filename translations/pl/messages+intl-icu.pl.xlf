@@ -3661,5 +3661,11 @@
         <target>Tabela</target>
       </segment>
     </unit>
+    <unit id="cafGqHB" name="label.labels_item_index">
+      <segment state="translated">
+        <source>No.</source>
+        <target>L.p.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
