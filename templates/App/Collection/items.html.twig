@@ -34,7 +34,7 @@
                     {% endif %}
                 </div>
                 <div>
-                    <h1>{{ collection.title }}</h1>
+                    <h1>{{ collection.title|transMlang }}</h1>
                     <ul class="nav nav-pills">
                         <li>{{ 'counter.item'|trans({'count': items|length}) }}</li>
                     </ul>

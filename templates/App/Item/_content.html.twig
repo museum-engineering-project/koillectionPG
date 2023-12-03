@@ -1,7 +1,7 @@
 <div class="collection-header">
     <div class="title-block">
         <h1>
-            {{ item.name }}
+            {{ item.name|transMlang }}
             {% if item.quantity > 1 %}
                 <span class="quantity">(x{{ item.quantity }})</span>
             {% endif %}
@@ -112,7 +112,7 @@
             {% set underlinedTags = getUnderlinedTags(item.dataTexts) %}
             {% for datum in item.dataTexts %}
                 <div class="datum-row">
-                    <span class="label">{{ datum.label }} :</span>
+                    <span class="label">{{ datum.label|transMlang }} :</span>
                     {{ include('App/Datum/_display_value/_' ~ datum.type ~ '.html.twig', {'datum': datum}) }}
                 </div>
             {% endfor %}

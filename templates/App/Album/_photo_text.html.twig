@@ -1,10 +1,10 @@
 {% apply spaceless %}
-    {{ photo.title }}
+    {{ photo.title|transMlang }}
 
     <br>
 
     {% if photo.place %}
-        <i class="fa fa-map-marker fa-fw"></i> {{ photo.place }}
+        <i class="fa fa-map-marker fa-fw"></i> {{ photo.place|transMlang }}
     {% endif %}
     {% if photo.place and photo.takenAt %} &nbsp;/&nbsp; {% endif %}
     {% if photo.takenAt %}
@@ -13,5 +13,5 @@
 
     <br>
 
-    <span>{{ photo.comment }}</span>
+    <span>{{ photo.comment|transMlang }}</span>
 {% endapply %}

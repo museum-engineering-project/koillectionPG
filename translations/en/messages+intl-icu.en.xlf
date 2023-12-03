@@ -3721,5 +3721,11 @@
         <target>Table</target>
       </segment>
     </unit>
+    <unit id="cafGqHB" name="label.labels_item_index">
+      <segment state="translated">
+        <source>No.</source>
+        <target>No.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
