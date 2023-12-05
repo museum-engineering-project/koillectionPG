@@ -48,14 +48,7 @@ class LabelType extends AbstractType
         // even if we generate label for a single item/collection, it is passed in the array
         foreach ($options["objects"] as $object)
         {
-            if ($object instanceof Item)
-            {
-                $objectsMap[$object->getName()] = $object;
-            }
-            else // instanceof Collection
-            {
-                $objectsMap[$object->getTitle()] = $object;
-            }
+            $objectsMap[$object->getId()] = $object;
 
             foreach($object->getPublicDataTexts() as $datum)
             {
@@ -81,7 +74,17 @@ class LabelType extends AbstractType
                 'required' => false,
                 'multiple' => true,
                 'expanded' => true,
-                'data' => array_values($objectsMap)
+                'data' => array_values($objectsMap),
+                'choice_label' => function (Item|Collection $object): string {
+                    if ($object instanceof Item)
+                    {
+                        return $object->getName();
+                    }
+                    else // instanceof Collection
+                    {
+                        return $object->getTitle();
+                    }
+                }
             ]);
 
             $builder->add('labelType', ChoiceType::class, [
