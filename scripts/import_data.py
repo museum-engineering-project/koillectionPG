@@ -45,6 +45,10 @@ COLORS = ["E3F2FD", "F3E5F5", "FBE9E7", "EEEEEE", "E8EAF6"]
 #       Their list can be changed in src/Service/ColorPicker.php and in assets/styles/main.css
 
 
+def remove_not_allowed_chars(charset: str) -> str:
+    return charset.replace("\n", " ").replace("\r", " ").replace("\t", " ")
+
+
 def get_current_time() -> str:
     """Returns the current time in YYYY-MM-DD-hh:mm:ss format"""
     return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -232,7 +236,7 @@ def insert_template(cursor: MySQLCursor, owner_id: str, template_name: str) -> s
     template_data = {
         "id": generate_id(),
         "owner_id": owner_id,
-        "name": template_name,
+        "name": remove_not_allowed_chars(template_name),
         "created_at": get_current_time(),
     }
     insert_statement = (
@@ -260,7 +264,7 @@ def insert_field(cursor: MySQLCursor, owner_id: str, template_id: str, field_nam
     field_data = {
         "id": generate_id(),
         "template_id": template_id,
-        "name": field_name,
+        "name": remove_not_allowed_chars(field_name),
         "position": field_position,
         "type": field_type,
         "owner_id": owner_id,
@@ -292,7 +296,7 @@ def insert_collection(cursor: MySQLCursor, owner_id: str, collection_name: str, 
     collection_data = {
         "id": generate_id(),
         "owner_id": owner_id,
-        "title": collection_name,
+        "title": remove_not_allowed_chars(collection_name),
         "color": random.choice(COLORS),
         "seen_counter": 0,
         "visibility": DEFAULT_COLLECTION_VISIBILITY,
@@ -335,8 +339,8 @@ def insert_datum(cursor: MySQLCursor, owner_id: str, item_id: str, datum_name: s
         "item_id": item_id,
         "owner_id": owner_id,
         "type": datum_type,
-        "label": datum_name,
-        "value": datum_value,
+        "label": remove_not_allowed_chars(datum_name),
+        "value": remove_not_allowed_chars(datum_value),
         "position": datum_position,
         "created_at": get_current_time(),
         "visibility": visibility
@@ -367,7 +371,7 @@ def insert_item(cursor: MySQLCursor, owner_id: str, collection_id: str, item_nam
         "id": generate_id(),
         "collection_id": collection_id,
         "owner_id": owner_id,
-        "name": item_name,
+        "name": remove_not_allowed_chars(item_name),
         "quantity": item_quantity,
         "seen_counter": 0,
         "visibility": "public",
@@ -404,7 +408,7 @@ def insert_log(cursor: MySQLCursor, owner_id: str, object_id: str, object_name: 
         "type": "create",
         "logged_at": get_current_time(),
         "object_id": object_id,
-        "object_label": object_name,
+        "object_label": remove_not_allowed_chars(object_name),
         "object_class": object_class
     }
     insert_statement = (
