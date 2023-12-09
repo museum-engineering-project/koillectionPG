@@ -79,7 +79,7 @@ function transMlang(text) {
         return "";
     }
 
-    var openingTag = "{[ \t]*mlang[ \t]*" + Translator.locale + "[ \t]*(default)?[ \t]*}";
+    var openingTag = "{[ \t]*mlang[ \t]+" + Translator.locale + "([ \t]+default)?[ \t]*}";
     var closingTag = "{[ \t]*mlang[ \t]*}";
 
     var pattern = new RegExp(openingTag + ".*?" + closingTag, 'g');
@@ -87,7 +87,7 @@ function transMlang(text) {
 
     // if no tags were matched, try to match tags with default attribute
     if (matches.length === 0) {
-        openingTag = "{[ \t]*mlang[ \t]*.*?[ \t]*default[ \t]*}";
+        openingTag = "{[ \t]*mlang([ \t]+.*)?[ \t]+default[ \t]*}";
         pattern = new RegExp(openingTag + ".*?" + closingTag, 'g');
         matches = [...text.matchAll(pattern)];
     }
@@ -103,7 +103,7 @@ function transMlang(text) {
     }
 
     // remove all remaining (unmatched) mlang tags and their content
-    text = text.replace(new RegExp("{[ \t]*mlang[ \t]*.*?[ \t]*}" + ".*?" + closingTag, 'g'), "");
+    text = text.replace(new RegExp("{[ \t]*mlang([ \t]+.*)?[ \t]*}" + ".*?" + closingTag, 'g'), "");
 
     return text;
 }
